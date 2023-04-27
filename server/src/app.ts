@@ -10,5 +10,5 @@ app.use(express.urlencoded({ extended: false }));
 app.use(router);
 
 app.listen(3000, () => {
-	console.log(`App rodando na porta 3000`);
+	console.log(`Connected to port 3000`);
 });
