@@ -6,7 +6,7 @@ export const coinSchema = z.object({
 			required_error: "Name is required",
 		}),
 		symbol: z.string({
-			required_error: "Email is required",
+			required_error: "Symbol is required",
 		}),
 		value: z.number({
 			required_error: "Value is required",
