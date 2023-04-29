@@ -1,0 +1,19 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.bg-pattern {
+	background: repeating-linear-gradient(
+		-30deg,
+		#acd1bf,
+		#acd1bf 25px,
+		#ece3cd 25px,
+		#ece3cd 75px
+	);
+	background-color: #ece3cd;
+	opacity: 0.8;
+}
+
+.shadow-solid {
+	box-shadow: 12.5px 12.5px #000;
+}
