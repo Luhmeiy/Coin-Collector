@@ -1,8 +1,15 @@
 import express from "express";
-import { getData, postData } from "./controllers/DatabaseController";
+import {
+	getData,
+	postData,
+	registerUser,
+} from "./controllers/DatabaseController";
 import { validate } from "./middlewares/validate";
+
+// Schemas
 import { coinSchema } from "./schemas/Coin";
 import { presetSchema } from "./schemas/Preset";
+import { userSchema } from "./schemas/User";
 
 export const router = express();
 
@@ -75,6 +82,23 @@ router.get("/:userid/coins/:id", async (req, res) => {
 	const id = req.params.id;
 
 	const data = await getData(`users/${userid}/coins`, undefined, id);
+
+	res.send(JSON.stringify(data));
+});
+
+router.get("/users/:userid", async (req, res) => {
+	const userid = req.params.userid;
+
+	const data = await getData("users", undefined, userid);
+
+	res.send(JSON.stringify(data));
+});
+
+router.post("/users", validate(userSchema), async (req, res) => {
+	const { uid } = req.body;
+	console.log(req.body);
+
+	const data = await registerUser(`users`, req.body, uid);
 
 	res.send(JSON.stringify(data));
 });

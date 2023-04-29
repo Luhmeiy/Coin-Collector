@@ -8,6 +8,7 @@ import {
 	getDocs,
 	orderBy,
 	query,
+	setDoc,
 } from "firebase/firestore";
 
 export const getData = async (path: string, order?: string, id?: string) => {
@@ -39,6 +40,18 @@ export const postData = async (path: string, data: {}) => {
 	const dbRef = collection(db, path);
 
 	addDoc(dbRef, data)
+		.then((docRef) => {
+			return docRef;
+		})
+		.catch((error) => {
+			return error;
+		});
+};
+
+export const registerUser = async (path: string, data: {}, uid: string) => {
+	const dbRef = doc(db, path, uid);
+
+	setDoc(dbRef, data)
 		.then((docRef) => {
 			return docRef;
 		})
