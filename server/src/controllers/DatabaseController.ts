@@ -11,6 +11,12 @@ import {
 	setDoc,
 } from "firebase/firestore";
 
+interface userData {
+	email: string;
+	displayName: string;
+	photoURL: string;
+}
+
 export const getData = async (path: string, order?: string, id?: string) => {
 	let data: DocumentData[] = [];
 
@@ -48,10 +54,22 @@ export const postData = async (path: string, data: {}) => {
 		});
 };
 
-export const registerUser = async (path: string, data: {}, uid: string) => {
+export const registerUser = async (
+	path: string,
+	data: userData,
+	uid: string
+) => {
 	const dbRef = doc(db, path, uid);
 
-	setDoc(dbRef, data)
+	const { email, displayName, photoURL } = data;
+
+	const userData = {
+		email,
+		displayName,
+		photoURL,
+	};
+
+	setDoc(dbRef, userData)
 		.then((docRef) => {
 			return docRef;
 		})

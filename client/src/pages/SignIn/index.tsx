@@ -18,13 +18,13 @@ const SignIn = () => {
 	async function searchUsers(userData: User) {
 		const { uid } = userData;
 
-		await fetch(`http://localhost:3000/users/${uid}`)
+		await fetch(`https://coin-collector-server.vercel.app/users/${uid}`)
 			.then((response) => {
 				return response.json();
 			})
 			.then((data) => {
 				if (data.length > 0) {
-					console.log("Login");
+					registerUser(userData);
 				} else {
 					registerUser(userData);
 				}
@@ -41,7 +41,7 @@ const SignIn = () => {
 			photoURL,
 		};
 
-		fetch("http://localhost:3000/users", {
+		fetch("https://coin-collector-server.vercel.app/users", {
 			method: "POST",
 			headers: {
 				"Content-type": "application/json",

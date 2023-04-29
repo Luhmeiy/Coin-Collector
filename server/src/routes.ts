@@ -96,7 +96,6 @@ router.get("/users/:userid", async (req, res) => {
 
 router.post("/users", validate(userSchema), async (req, res) => {
 	const { uid } = req.body;
-	console.log(req.body);
 
 	const data = await registerUser(`users`, req.body, uid);
 
