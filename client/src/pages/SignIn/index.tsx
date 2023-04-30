@@ -1,8 +1,11 @@
 import { GoogleLogo } from "@phosphor-icons/react";
 import { GoogleAuthProvider, signInWithPopup, User } from "firebase/auth";
 import { auth } from "../../services/firebase";
+import { useNavigate } from "react-router-dom";
 
 const SignIn = () => {
+	const navigate = useNavigate();
+
 	function handleGoogleSignIn() {
 		const provider = new GoogleAuthProvider();
 
@@ -24,11 +27,17 @@ const SignIn = () => {
 			})
 			.then((data) => {
 				if (data.length > 0) {
-					registerUser(userData);
+					login(uid);
 				} else {
 					registerUser(userData);
 				}
 			});
+	}
+
+	async function login(uid: string) {
+		localStorage.setItem("userUID", uid);
+
+		navigate("/");
 	}
 
 	async function registerUser(userData: User) {

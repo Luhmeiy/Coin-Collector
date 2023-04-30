@@ -1,5 +1,6 @@
+/* eslint-disable no-undef */
 module.exports = {
-  plugins: {
-    tailwindcss: {},
-  },
-}
+    plugins: {
+      tailwindcss: {},
+    },
+  }
