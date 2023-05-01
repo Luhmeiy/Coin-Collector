@@ -2,8 +2,12 @@ import { GoogleLogo } from "@phosphor-icons/react";
 import { GoogleAuthProvider, signInWithPopup, User } from "firebase/auth";
 import { auth } from "../../services/firebase";
 import { useNavigate } from "react-router-dom";
+import { useContext } from "react";
+import { ThemeContext } from "../../context";
 
 const SignIn = () => {
+	const { state } = useContext(ThemeContext);
+
 	const navigate = useNavigate();
 
 	function handleGoogleSignIn() {
@@ -60,12 +64,12 @@ const SignIn = () => {
 	}
 
 	return (
-		<div className="w-[85%] h-[85%] flex flex-col justify-center items-center border-8 border-black rounded-2xl p-5 bg-[#f5efe3] shadow-solid">
+		<div className="w-[85%] h-[85%] flex flex-col justify-center items-center border-8 border-black rounded-2xl p-5 bg-light-background shadow-solid">
 			<h1 className="text-5xl font-bold mb-2">Coin Collector</h1>
 			<p className="text-lg mb-12">Sign in to catalog your coins!</p>
 
 			<button
-				className="flex items-center bg-[#acd1bf] border-4 border-black rounded py-2 px-6 font-semibold transition-all duration-500 hover:brightness-90"
+				className={`flex items-center bg-${state.theme} border-4 border-black rounded py-2 px-6 font-semibold transition-all duration-500 hover:brightness-90`}
 				onClick={handleGoogleSignIn}
 			>
 				<GoogleLogo

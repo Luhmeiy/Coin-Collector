@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 interface userData {
@@ -10,29 +10,36 @@ interface userData {
 export const useGetUser = () => {
 	const [user, setUser] = useState<userData>();
 
-	const userUID = localStorage.getItem("userUID");
-
 	const navigate = useNavigate();
 
-	async function searchUsers(uid: string) {
-		await fetch(`https://coin-collector-server.vercel.app/users/${uid}`)
-			.then((response) => {
-				return response.json();
-			})
-			.then((data: userData[]) => {
-				if (data.length > 0) {
-					setUser(data[0]);
-				} else {
-					navigate("/register");
-				}
-			});
-	}
+	useEffect(() => {
+		const userUID = localStorage.getItem("userUID");
 
-	if (userUID) {
-		searchUsers(userUID);
+		if (userUID) {
+			const searchUsers = async (uid: string) => {
+				await fetch(
+					`https://coin-collector-server.vercel.app/users/${uid}`
+				)
+					.then((response) => {
+						return response.json();
+					})
+					.then((data: userData[]) => {
+						if (data.length > 0) {
+							setUser(data[0]);
+						} else {
+							navigate("/register");
+						}
+					})
+					.catch(() => navigate("/register"));
+			};
 
+			searchUsers(userUID);
+		} else {
+			navigate("/register");
+		}
+	}, [navigate]);
+
+	if (user) {
 		return user;
-	} else {
-		navigate("/register");
 	}
 };
