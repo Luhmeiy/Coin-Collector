@@ -4,9 +4,10 @@ import { auth } from "../../services/firebase";
 import { useNavigate } from "react-router-dom";
 import { useContext } from "react";
 import { ThemeContext } from "../../context";
+import { ACTIONS } from "../../utils/reducer";
 
 const SignIn = () => {
-	const { state } = useContext(ThemeContext);
+	const { state, dispatch } = useContext(ThemeContext);
 
 	const navigate = useNavigate();
 
@@ -40,6 +41,7 @@ const SignIn = () => {
 
 	async function login(uid: string) {
 		localStorage.setItem("userUID", uid);
+		dispatch({ type: ACTIONS.ADD_USER_UID, payload: { userUID: uid } });
 
 		navigate("/");
 	}

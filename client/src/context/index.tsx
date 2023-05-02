@@ -1,11 +1,31 @@
-import { Dispatch, ReactNode, createContext, useReducer } from "react";
-import { reducer, initialState, stateData, actionData } from "../utils/reducer";
+import {
+	Dispatch,
+	ReactNode,
+	Reducer,
+	createContext,
+	useEffect,
+	useReducer,
+} from "react";
+import {
+	reducer,
+	initialState,
+	stateData,
+	actionData,
+	ACTIONS,
+} from "../utils/reducer";
 import resolveConfig from "tailwindcss/resolveConfig";
 import tailwindConfig from "../../tailwind.config";
+import { useNavigate } from "react-router-dom";
 
 interface themeContextData {
 	state: stateData;
 	dispatch: Dispatch<actionData>;
+}
+
+interface userData {
+	email: string;
+	displayName: string;
+	photoURL: string;
 }
 
 interface fullConfigData {
@@ -18,7 +38,12 @@ export const ThemeContext = createContext<themeContextData>({
 });
 
 export const ThemeProvider = ({ children }: { children: ReactNode }) => {
-	const [state, dispatch] = useReducer(reducer, initialState);
+	const [state, dispatch] = useReducer<Reducer<stateData, actionData>>(
+		reducer,
+		initialState
+	);
+
+	const navigate = useNavigate();
 
 	const fullConfig: fullConfigData = resolveConfig(tailwindConfig);
 
@@ -26,6 +51,34 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
 		"--color-gradient-primary",
 		fullConfig.theme.colors[state.theme]
 	);
+
+	useEffect(() => {
+		if (state.userUID) {
+			const searchUsers = async (uid: string) => {
+				await fetch(
+					`https://coin-collector-server.vercel.app/users/${uid}`
+				)
+					.then((response) => {
+						return response.json();
+					})
+					.then((data: userData[]) => {
+						if (data.length > 0) {
+							dispatch({
+								type: ACTIONS.ADD_USER,
+								payload: { user: data[0] },
+							});
+						} else {
+							navigate("/register");
+						}
+					})
+					.catch(() => navigate("/register"));
+			};
+
+			searchUsers(state.userUID);
+		} else {
+			navigate("/register");
+		}
+	}, [state.userUID]);
 
 	return (
 		<ThemeContext.Provider value={{ state, dispatch }}>
