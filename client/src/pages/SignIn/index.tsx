@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { useContext } from "react";
 import { ThemeContext } from "../../context";
 import { ACTIONS } from "../../utils/reducer";
+import { motion } from "framer-motion";
 
 const SignIn = () => {
 	const { state, dispatch } = useContext(ThemeContext);
@@ -66,7 +67,16 @@ const SignIn = () => {
 	}
 
 	return (
-		<div className="w-[85%] h-[85%] flex flex-col justify-center items-center border-8 border-black rounded-2xl p-5 bg-light-background shadow-solid">
+		<motion.div
+			className="w-[85%] h-[85%] flex flex-col justify-center items-center border-8 border-black rounded-2xl p-5 bg-light-background shadow-solid"
+			initial={{ translateY: window.innerHeight }}
+			animate={{ translateY: 0 }}
+			exit={{ translateY: window.innerHeight }}
+			transition={{
+				duration: 0.5,
+				ease: "easeInOut",
+			}}
+		>
 			<h1 className="text-5xl font-bold mb-2">Coin Collector</h1>
 			<p className="text-lg mb-12">Sign in to catalog your coins!</p>
 
@@ -82,7 +92,7 @@ const SignIn = () => {
 				/>{" "}
 				Sign in with Google
 			</button>
-		</div>
+		</motion.div>
 	);
 };
 

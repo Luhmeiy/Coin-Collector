@@ -3,6 +3,7 @@ import { ACTIONS } from "../../utils/reducer";
 import { useContext } from "react";
 import { ThemeContext } from "../../context";
 import { useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
 
 const Navbar = () => {
 	const { state, dispatch } = useContext(ThemeContext);
@@ -24,7 +25,16 @@ const Navbar = () => {
 	}
 
 	return (
-		<nav className="w-[85%] flex justify-end fixed top-0">
+		<motion.nav
+			className="w-[85%] flex justify-end fixed top-0"
+			initial={{ translateY: -window.innerHeight }}
+			animate={{ translateY: 0 }}
+			exit={{ translateY: -window.innerHeight }}
+			transition={{
+				duration: 0.5,
+				ease: "easeInOut",
+			}}
+		>
 			{state.user && (
 				<>
 					<DropdownMenu.Root>
@@ -78,7 +88,7 @@ const Navbar = () => {
 					</button>
 				</>
 			)}
-		</nav>
+		</motion.nav>
 	);
 };
 
