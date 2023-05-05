@@ -3,6 +3,7 @@ import {
 	DocumentData,
 	addDoc,
 	collection,
+	deleteDoc,
 	doc,
 	getDoc,
 	getDocs,
@@ -75,5 +76,17 @@ export const registerUser = async (
 		})
 		.catch((error) => {
 			return error;
+		});
+};
+
+export const deleteData = async (path: string, id: string) => {
+	const docRef = doc(db, path, id);
+
+	deleteDoc(docRef)
+		.then(() => {
+			console.log("Document deleted successfully");
+		})
+		.catch((error) => {
+			console.log(error);
 		});
 };

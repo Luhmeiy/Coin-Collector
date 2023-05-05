@@ -1,5 +1,6 @@
 import express from "express";
 import {
+	deleteData,
 	getData,
 	postData,
 	registerUser,
@@ -51,6 +52,14 @@ router.get("/preset_coins/:id", async (req, res) => {
 	res.send(JSON.stringify(data));
 });
 
+router.delete("/preset_coins/:id", async (req, res) => {
+	const id = req.params.id;
+
+	const data = await deleteData("preset_coins", id);
+
+	res.send(JSON.stringify(data));
+});
+
 router.get("/:userid/coins", async (req, res) => {
 	const orderType = req.query.order || "name";
 	const userid = req.params.userid;
@@ -82,6 +91,15 @@ router.get("/:userid/coins/:id", async (req, res) => {
 	const id = req.params.id;
 
 	const data = await getData(`users/${userid}/coins`, undefined, id);
+
+	res.send(JSON.stringify(data));
+});
+
+router.delete("/:userid/coins/:id", async (req, res) => {
+	const userid = req.params.userid;
+	const id = req.params.id;
+
+	const data = await deleteData(`users/${userid}/coins`, id);
 
 	res.send(JSON.stringify(data));
 });
