@@ -11,12 +11,21 @@ import {
 	query,
 	setDoc,
 	updateDoc,
+	where,
 } from "firebase/firestore";
 
 interface userData {
 	email: string;
 	displayName: string;
 	photoURL: string;
+}
+
+interface coinData {
+	name: string;
+	symbol: string;
+	value: number;
+	year: number;
+	quantity: number;
 }
 
 export const getData = async (path: string, order?: string, id?: string) => {
@@ -56,6 +65,30 @@ export const postData = async (path: string, data: {}) => {
 		});
 };
 
+export const deleteData = async (path: string, id: string) => {
+	const docRef = doc(db, path, id);
+
+	deleteDoc(docRef)
+		.then(() => {
+			console.log("Document deleted successfully");
+		})
+		.catch((error) => {
+			console.log(error);
+		});
+};
+
+export const updateData = async (path: string, id: string, data: {}) => {
+	const docRef = doc(db, path, id);
+
+	updateDoc(docRef, data)
+		.then(() => {
+			console.log("Document updated successfully");
+		})
+		.catch((error) => {
+			console.log(error);
+		});
+};
+
 export const registerUser = async (
 	path: string,
 	data: userData,
@@ -80,26 +113,22 @@ export const registerUser = async (
 		});
 };
 
-export const deleteData = async (path: string, id: string) => {
-	const docRef = doc(db, path, id);
+export const verifyIfCoinExists = async (path: string, data: coinData) => {
+	const results: DocumentData = [];
 
-	deleteDoc(docRef)
-		.then(() => {
-			console.log("Document deleted successfully");
-		})
-		.catch((error) => {
-			console.log(error);
-		});
-};
+	const dbRef = collection(db, path);
+	const q = query(
+		dbRef,
+		where("name", "==", data.name),
+		where("symbol", "==", data.symbol),
+		where("value", "==", data.value),
+		where("year", "==", data.year)
+	);
+	const docsSnap = await getDocs(q);
 
-export const updateData = async (path: string, id: string, data: {}) => {
-	const docRef = doc(db, path, id);
+	docsSnap.forEach((doc) => {
+		results.push({ id: doc.id, ...doc.data() });
+	});
 
-	updateDoc(docRef, data)
-		.then(() => {
-			console.log("Document updated successfully");
-		})
-		.catch((error) => {
-			console.log(error);
-		});
+	return results;
 };

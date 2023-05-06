@@ -5,6 +5,7 @@ import {
 	postData,
 	registerUser,
 	updateData,
+	verifyIfCoinExists,
 } from "./controllers/DatabaseController";
 import { validate } from "./middlewares/validate";
 
@@ -81,18 +82,33 @@ router.get("/:userid/coins", async (req, res) => {
 router.post("/:userid/coins", validate(coinSchema), async (req, res) => {
 	const userid = req.params.userid;
 
-	const { name, symbol, value, year } = req.body;
+	const { name, symbol, value, year, quantity } = req.body;
 
 	const coinData = {
 		name,
 		symbol,
 		value,
 		year,
+		quantity,
 	};
 
-	const data = await postData(`users/${userid}/coins`, coinData);
+	verifyIfCoinExists(`users/${userid}/coins`, coinData).then(
+		async (results) => {
+			if (results.length > 0) {
+				const { id, quantity } = results[0];
 
-	res.send(JSON.stringify(data));
+				const data = await updateData(`users/${userid}/coins`, id, {
+					quantity: quantity + 1,
+				});
+
+				res.send(JSON.stringify(data));
+			} else {
+				const data = await postData(`users/${userid}/coins`, coinData);
+
+				res.send(JSON.stringify(data));
+			}
+		}
+	);
 });
 
 router.get("/:userid/coins/:id", async (req, res) => {
