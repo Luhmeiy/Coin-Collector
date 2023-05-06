@@ -4,6 +4,7 @@ import {
 	getData,
 	postData,
 	registerUser,
+	updateData,
 } from "./controllers/DatabaseController";
 import { validate } from "./middlewares/validate";
 
@@ -60,6 +61,14 @@ router.delete("/preset_coins/:id", async (req, res) => {
 	res.send(JSON.stringify(data));
 });
 
+router.put("/preset_coins/:id", async (req, res) => {
+	const id = req.params.id;
+
+	const data = await updateData("preset_coins", id, req.body);
+
+	res.send(JSON.stringify(data));
+});
+
 router.get("/:userid/coins", async (req, res) => {
 	const orderType = req.query.order || "name";
 	const userid = req.params.userid;
@@ -104,10 +113,27 @@ router.delete("/:userid/coins/:id", async (req, res) => {
 	res.send(JSON.stringify(data));
 });
 
+router.put("/:userid/coins/:id", async (req, res) => {
+	const userid = req.params.userid;
+	const id = req.params.id;
+
+	const data = await updateData(`users/${userid}/coins`, id, req.body);
+
+	res.send(JSON.stringify(data));
+});
+
 router.get("/users/:userid", async (req, res) => {
 	const userid = req.params.userid;
 
 	const data = await getData("users", undefined, userid);
+
+	res.send(JSON.stringify(data));
+});
+
+router.put("/users/:userid", async (req, res) => {
+	const userid = req.params.userid;
+
+	const data = await updateData("users", userid, req.body);
 
 	res.send(JSON.stringify(data));
 });

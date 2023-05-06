@@ -10,6 +10,7 @@ import {
 	orderBy,
 	query,
 	setDoc,
+	updateDoc,
 } from "firebase/firestore";
 
 interface userData {
@@ -85,6 +86,18 @@ export const deleteData = async (path: string, id: string) => {
 	deleteDoc(docRef)
 		.then(() => {
 			console.log("Document deleted successfully");
+		})
+		.catch((error) => {
+			console.log(error);
+		});
+};
+
+export const updateData = async (path: string, id: string, data: {}) => {
+	const docRef = doc(db, path, id);
+
+	updateDoc(docRef, data)
+		.then(() => {
+			console.log("Document updated successfully");
 		})
 		.catch((error) => {
 			console.log(error);
