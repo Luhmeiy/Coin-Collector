@@ -2,10 +2,12 @@ import type { Config } from "tailwindcss";
 
 export default {
 	content: ["./src/**/*.{js,jsx,ts,tsx}"],
+	darkMode: "class",
 	theme: {
 		extend: {
 			colors: {
-				"light-background": "#ece3cd",
+				"dark-mode": "#615f61",
+				"light-mode": "#ece3cd",
 				"green-theme": "#acd1bf",
 				"blue-theme": "#b7d3d1",
 				"red-theme": "#eb9988",

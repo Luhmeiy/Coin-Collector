@@ -4,7 +4,7 @@
 
 :root {
 	--color-gradient-primary: #acd1bf;
-	--color-gradient-secondary: #ece3cd;
+	--color-gradient-secondary: #615f61;
 }
 
 .bg-pattern {
@@ -15,7 +15,7 @@
 		var(--color-gradient-secondary) 25px,
 		var(--color-gradient-secondary) 75px
 	);
-	background-color: #ece3cd;
+	background-color: --color-gradient-secondary;
 }
 
 .shadow-solid {

@@ -52,6 +52,11 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
 		fullConfig.theme.colors[state.theme]
 	);
 
+	document.documentElement.style.setProperty(
+		"--color-gradient-secondary",
+		fullConfig.theme.colors[state.mode]
+	);
+
 	useEffect(() => {
 		if (state.userUID) {
 			const searchUsers = async (uid: string) => {

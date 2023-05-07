@@ -30,7 +30,7 @@ const Home = () => {
 
 	return (
 		<motion.div
-			className="w-[85%] h-[85%] flex flex-col border-8 border-black rounded-2xl bg-light-background shadow-solid"
+			className={`w-[85%] h-[85%] flex flex-col border-8 border-black rounded-2xl bg-light-mode dark:bg-dark-mode dark:text-white shadow-solid`}
 			initial={{ translateY: -window.innerHeight }}
 			animate={{ translateY: 0 }}
 			exit={{ translateY: -window.innerHeight }}
@@ -50,7 +50,7 @@ const Home = () => {
 					{coins && (
 						<div>
 							<div
-								className={`grid grid-cols-5 border-b-2 bg-${state.theme} border-black text-xl font-bold p-5`}
+								className={`grid grid-cols-5 border-b-2 bg-${state.theme} border-black text-xl font-bold text-black p-5`}
 							>
 								<p>Coin</p>
 								<p>Value</p>
@@ -59,7 +59,9 @@ const Home = () => {
 								<p>Actions</p>
 							</div>
 
-							<div className="[&>*:nth-child(even)]:bg-[#d7cdb5]">
+							<div
+								className={`[&>*:nth-child(even)]:bg-${state.mode} [&>*:nth-child(even)]:backdrop-brightness-75`}
+							>
 								{coins.map((coin) => (
 									<div
 										key={coin.name + coin.year}
@@ -73,7 +75,7 @@ const Home = () => {
 										<p></p>
 
 										<div className="flex flex-wrap gap-4">
-											<button className="flex items-center bg-gray-300 rounded-md px-6 py-2 hover:bg-gray-400 active:bg-gray-200">
+											<button className="flex items-center bg-gray-300 dark:bg-slate-500 text-black rounded-md px-6 py-2  hover:bg-gray-400 dark:hover:bg-slate-600 active:bg-gray-200 dark:active:bg-slate-400">
 												<PencilSimple
 													size={20}
 													weight="bold"
@@ -82,7 +84,7 @@ const Home = () => {
 												Edit
 											</button>
 
-											<button className="flex items-center bg-red-400 rounded-md px-6 py-2 hover:bg-red-500 active:bg-red-300">
+											<button className="flex items-center bg-red-400 text-black rounded-md px-6 py-2 hover:bg-red-500 active:bg-red-300">
 												<Trash
 													size={20}
 													weight="bold"
