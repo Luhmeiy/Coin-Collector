@@ -15,7 +15,7 @@ const Home = () => {
 	const [coins, setCoins] = useState<coinData[]>();
 
 	async function fetchCoins() {
-		await fetch(`${state.serverURL}/${state.userUID}/coins`)
+		await fetch(`${state.serverURL}/coins/${state.userUID}`)
 			.then((response) => {
 				return response.json();
 			})
