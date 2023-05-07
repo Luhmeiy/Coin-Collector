@@ -55,9 +55,7 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
 	useEffect(() => {
 		if (state.userUID) {
 			const searchUsers = async (uid: string) => {
-				await fetch(
-					`https://coin-collector-server.vercel.app/users/${uid}`
-				)
+				await fetch(`${state.serverURL}/users/${uid}`)
 					.then((response) => {
 						return response.json();
 					})

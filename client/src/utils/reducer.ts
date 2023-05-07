@@ -14,6 +14,7 @@ export interface stateData {
 	theme: string;
 	userUID: string | null;
 	user?: userData;
+	serverURL?: string;
 }
 
 export interface actionData {
@@ -44,4 +45,5 @@ export const reducer = (state: stateData, action: actionData): stateData => {
 export const initialState = {
 	theme: "green-theme",
 	userUID: localStorage.getItem("userUID"),
+	serverURL: import.meta.env.VITE_SERVER_URL,
 };

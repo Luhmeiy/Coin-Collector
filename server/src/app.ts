@@ -1,6 +1,9 @@
 import express from "express";
 import cors from "cors";
+import * as dotenv from "dotenv";
 import { router } from "./routes";
+
+dotenv.config();
 
 const app = express();
 
@@ -14,7 +17,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(
 	cors({
 		credentials: true,
-		origin: "https://coin-collector.vercel.app",
+		origin: process.env.CLIENT_URL,
 	})
 );
 

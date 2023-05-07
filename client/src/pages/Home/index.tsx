@@ -15,9 +15,7 @@ const Home = () => {
 	const [coins, setCoins] = useState<coinData[]>();
 
 	async function fetchCoins() {
-		await fetch(
-			`https://coin-collector-server.vercel.app/${state.userUID}/coins`
-		)
+		await fetch(`${state.serverURL}/${state.userUID}/coins`)
 			.then((response) => {
 				return response.json();
 			})

@@ -27,7 +27,7 @@ const SignIn = () => {
 	async function searchUsers(userData: User) {
 		const { uid } = userData;
 
-		await fetch(`https://coin-collector-server.vercel.app/users/${uid}`)
+		await fetch(`${state.serverURL}/users/${uid}`)
 			.then((response) => {
 				return response.json();
 			})
@@ -57,7 +57,7 @@ const SignIn = () => {
 			photoURL,
 		};
 
-		fetch("https://coin-collector-server.vercel.app/users", {
+		fetch(`${state.serverURL}/users`, {
 			method: "POST",
 			headers: {
 				"Content-type": "application/json",
