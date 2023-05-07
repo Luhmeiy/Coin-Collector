@@ -16,8 +16,6 @@ export const coinSchema = z.object({
 				required_error: "Year is required",
 			})
 			.min(4, { message: "Must be 4 characters long" }),
-		quantity: z.number({
-			required_error: "Quantity is required",
-		}),
+		quantity: z.optional(z.number()),
 	}),
 });

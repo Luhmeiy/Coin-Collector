@@ -2,17 +2,22 @@ import { useContext, useEffect, useState } from "react";
 import { ThemeContext } from "../../context";
 import { motion } from "framer-motion";
 import { PencilSimple, Trash } from "@phosphor-icons/react";
+import { useNavigate } from "react-router-dom";
 
-interface coinData {
+export interface coinData {
+	id: string;
 	name: string;
 	symbol: string;
 	value: number;
 	year: number;
+	quantity: number;
 }
 
 const Home = () => {
 	const { state } = useContext(ThemeContext);
 	const [coins, setCoins] = useState<coinData[]>();
+
+	const navigate = useNavigate();
 
 	async function fetchCoins() {
 		await fetch(`${state.serverURL}/coins/${state.userUID}`)
@@ -22,6 +27,17 @@ const Home = () => {
 			.then((data) => {
 				setCoins(data);
 			});
+	}
+
+	async function handleDeleteCoin(coinId: string) {
+		await fetch(
+			`${state.serverURL}/coins/${state.userUID}/coin/${coinId}`,
+			{
+				method: "DELETE",
+			}
+		);
+
+		fetchCoins();
 	}
 
 	useEffect(() => {
@@ -72,10 +88,17 @@ const Home = () => {
 											{coin.symbol} {coin.value}
 										</p>
 										<p>{coin.year}</p>
-										<p></p>
+										<p>{coin.quantity}</p>
 
 										<div className="flex flex-wrap gap-4">
-											<button className="flex items-center bg-gray-300 dark:bg-slate-500 text-black rounded-md px-6 py-2  hover:bg-gray-400 dark:hover:bg-slate-600 active:bg-gray-200 dark:active:bg-slate-400">
+											<button
+												className="flex items-center bg-gray-300 dark:bg-slate-500 text-black rounded-md px-6 py-2  hover:bg-gray-400 dark:hover:bg-slate-600 active:bg-gray-200 dark:active:bg-slate-400"
+												onClick={() =>
+													navigate(
+														`/edit/coin/${coin.id}`
+													)
+												}
+											>
 												<PencilSimple
 													size={20}
 													weight="bold"
@@ -84,7 +107,12 @@ const Home = () => {
 												Edit
 											</button>
 
-											<button className="flex items-center bg-red-400 text-black rounded-md px-6 py-2 hover:bg-red-500 active:bg-red-300">
+											<button
+												className="flex items-center bg-red-400 text-black rounded-md px-6 py-2 hover:bg-red-500 active:bg-red-300"
+												onClick={() =>
+													handleDeleteCoin(coin.id)
+												}
+											>
 												<Trash
 													size={20}
 													weight="bold"

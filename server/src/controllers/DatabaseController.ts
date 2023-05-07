@@ -46,7 +46,7 @@ export const getData = async (path: string, order?: string, id?: string) => {
 		const docsSnap = await getDocs(q);
 
 		docsSnap.forEach((doc) => {
-			data.push(doc.data());
+			data.push({ ...doc.data(), id: doc.id });
 		});
 	}
 

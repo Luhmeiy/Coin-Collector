@@ -1,5 +1,5 @@
 import { Route, Routes, useLocation } from "react-router-dom";
-import { Home, SignIn } from "../../pages";
+import { EditCoin, Home, SignIn } from "../../pages";
 import { AnimatePresence } from "framer-motion";
 import { Navbar } from "../";
 
@@ -13,6 +13,7 @@ const AnimatedRoutes = () => {
 			<Routes location={location} key={location.pathname}>
 				<Route path="/" element={<Home />} />
 				<Route path="/register" element={<SignIn />} />
+				<Route path="/edit/coin/:coinId" element={<EditCoin />} />
 			</Routes>
 		</AnimatePresence>
 	);

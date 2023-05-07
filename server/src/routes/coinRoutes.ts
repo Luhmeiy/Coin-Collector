@@ -23,14 +23,14 @@ router.get("/:userid", async (req, res) => {
 router.post("/:userid", validate(coinSchema), async (req, res) => {
 	const userid = req.params.userid;
 
-	const { name, symbol, value, year, quantity } = req.body;
+	const { name, symbol, value, year } = req.body;
 
 	const coinData = {
 		name,
 		symbol,
 		value,
 		year,
-		quantity,
+		quantity: 1,
 	};
 
 	verifyIfCoinExists(`users/${userid}/coins`, coinData).then(
@@ -70,7 +70,7 @@ router.delete("/:userid/coin/:id", async (req, res) => {
 	res.send(JSON.stringify(data));
 });
 
-router.put("/:userid/coin/:id", async (req, res) => {
+router.put("/:userid/coin/:id", validate(coinSchema), async (req, res) => {
 	const userid = req.params.userid;
 	const id = req.params.id;
 
