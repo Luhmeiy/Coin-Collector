@@ -68,7 +68,7 @@ const SignIn = () => {
 
 	return (
 		<motion.div
-			className="w-[85%] h-[85%] flex flex-col justify-center items-center border-8 border-black rounded-2xl p-5 bg-light-background shadow-solid"
+			className="w-[85%] h-[85%] flex flex-col justify-center items-center border-8 border-black rounded-2xl p-5 bg-light-mode dark:bg-dark-mode dark:text-white shadow-solid"
 			initial={{ translateY: window.innerHeight }}
 			animate={{ translateY: 0 }}
 			exit={{ translateY: window.innerHeight }}
@@ -81,7 +81,7 @@ const SignIn = () => {
 			<p className="text-lg mb-12">Sign in to catalog your coins!</p>
 
 			<button
-				className={`flex items-center bg-${state.theme} border-4 border-black rounded py-2 px-6 font-semibold transition-all duration-500 hover:brightness-90`}
+				className={`flex items-center bg-${state.theme} border-4 border-black rounded text-black py-2 px-6 font-semibold transition-all duration-500 hover:brightness-90`}
 				onClick={handleGoogleSignIn}
 			>
 				<GoogleLogo

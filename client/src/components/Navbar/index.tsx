@@ -4,9 +4,11 @@ import { useContext } from "react";
 import { ThemeContext } from "../../context";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
+import { useUpdateUser } from "../../utils/updateUser";
 
 const Navbar = () => {
 	const { state, dispatch } = useContext(ThemeContext);
+	const updateUser = useUpdateUser();
 
 	const navigation = useNavigate();
 
@@ -14,10 +16,14 @@ const Navbar = () => {
 		document.documentElement.className = "";
 		document.documentElement.classList.add(typeValue.split("-")[0]);
 		dispatch({ type: ACTIONS.CHANGE_MODE, payload: { mode: typeValue } });
+
+		updateUser({ mode: typeValue });
 	}
 
 	function handleThemeDispatch(typeValue: string) {
 		dispatch({ type: ACTIONS.CHANGE_THEME, payload: { theme: typeValue } });
+
+		updateUser({ theme: typeValue });
 	}
 
 	function handleSignOut() {

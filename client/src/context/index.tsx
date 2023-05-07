@@ -26,6 +26,8 @@ interface userData {
 	email: string;
 	displayName: string;
 	photoURL: string;
+	mode: string;
+	theme: string;
 }
 
 interface fullConfigData {
@@ -70,6 +72,20 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
 								type: ACTIONS.ADD_USER,
 								payload: { user: data[0] },
 							});
+
+							dispatch({
+								type: ACTIONS.CHANGE_MODE,
+								payload: { mode: data[0].mode },
+							});
+
+							dispatch({
+								type: ACTIONS.CHANGE_THEME,
+								payload: { theme: data[0].theme },
+							});
+
+							document.documentElement.classList.add(
+								data[0].mode.split("-")[0]
+							);
 						} else {
 							navigate("/register");
 						}
@@ -81,7 +97,7 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
 		} else {
 			navigate("/register");
 		}
-	}, [state.userUID]);
+	}, [state.userUID, state.theme, state.mode]);
 
 	return (
 		<ThemeContext.Provider value={{ state, dispatch }}>
