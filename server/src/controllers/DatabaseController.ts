@@ -18,6 +18,8 @@ interface userData {
 	email: string;
 	displayName: string;
 	photoURL: string;
+	theme: string;
+	mode: string;
 }
 
 interface coinData {
@@ -96,12 +98,14 @@ export const registerUser = async (
 ) => {
 	const dbRef = doc(db, path, uid);
 
-	const { email, displayName, photoURL } = data;
+	const { email, displayName, photoURL, theme, mode } = data;
 
 	const userData = {
 		email,
 		displayName,
 		photoURL,
+		theme,
+		mode,
 	};
 
 	setDoc(dbRef, userData)

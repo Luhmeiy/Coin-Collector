@@ -18,7 +18,9 @@ const EditPreset = () => {
 	const navigate = useNavigate();
 
 	async function fetchPreset() {
-		await fetch(`${state.serverURL}/presets/${presetId}`)
+		await fetch(
+			`${state.serverURL}/presets/${state.userUID}/preset/${presetId}`
+		)
 			.then((response) => {
 				return response.json();
 			})
@@ -44,13 +46,16 @@ const EditPreset = () => {
 			value_range: valueRange?.split(",").map(Number),
 		};
 
-		await fetch(`${state.serverURL}/presets/${presetId}`, {
-			method: "PUT",
-			headers: {
-				"Content-type": "application/json",
-			},
-			body: JSON.stringify(data),
-		})
+		await fetch(
+			`${state.serverURL}/presets/${state.userUID}/preset/${presetId}`,
+			{
+				method: "PUT",
+				headers: {
+					"Content-type": "application/json",
+				},
+				body: JSON.stringify(data),
+			}
+		)
 			.then(() => navigate("/presets"))
 			.catch((error) => console.log(error));
 	}

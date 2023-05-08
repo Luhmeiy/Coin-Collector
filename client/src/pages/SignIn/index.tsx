@@ -55,15 +55,33 @@ const SignIn = () => {
 			email,
 			displayName,
 			photoURL,
+			theme: "green-theme",
+			mode: "light-mode",
 		};
 
-		fetch(`${state.serverURL}/users`, {
+		const basePresets = await fetch(`${state.serverURL}/presets`).then(
+			(response) => response.json()
+		);
+
+		await fetch(`${state.serverURL}/users`, {
 			method: "POST",
 			headers: {
 				"Content-type": "application/json",
 			},
 			body: JSON.stringify(data),
-		});
+		})
+			.then(async () => {
+				for (const basePreset of basePresets) {
+					await fetch(`${state.serverURL}/presets/${uid}`, {
+						method: "POST",
+						headers: {
+							"Content-type": "application/json",
+						},
+						body: JSON.stringify(basePreset),
+					});
+				}
+			})
+			.then(() => login(uid));
 	}
 
 	return (

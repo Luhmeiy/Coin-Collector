@@ -18,7 +18,18 @@ router.get("/", async (req, res) => {
 	res.send(JSON.stringify(data));
 });
 
-router.post("/", validate(presetSchema), async (req, res) => {
+router.get("/:userid", async (req, res) => {
+	const userid = req.params.userid;
+	const orderType = req.query.order || "name";
+
+	const data = await getData(`users/${userid}/presets`, String(orderType));
+
+	res.send(JSON.stringify(data));
+});
+
+router.post("/:userid", validate(presetSchema), async (req, res) => {
+	const userid = req.params.userid;
+
 	const {
 		final_emission_date,
 		initial_emission_date,
@@ -35,31 +46,34 @@ router.post("/", validate(presetSchema), async (req, res) => {
 		value_range,
 	};
 
-	const data = await postData("preset_coins", presetData);
+	const data = await postData(`users/${userid}/presets`, presetData);
 
 	res.send(JSON.stringify(data));
 });
 
-router.get("/:id", async (req, res) => {
+router.get("/:userid/preset/:id", async (req, res) => {
+	const userid = req.params.userid;
 	const id = req.params.id;
 
-	const data = await getData(`preset_coins`, undefined, id);
+	const data = await getData(`users/${userid}/presets`, undefined, id);
 
 	res.send(JSON.stringify(data));
 });
 
-router.delete("/:id", async (req, res) => {
+router.delete("/:userid/preset/:id", async (req, res) => {
+	const userid = req.params.userid;
 	const id = req.params.id;
 
-	const data = await deleteData("preset_coins", id);
+	const data = await deleteData(`users/${userid}/presets`, id);
 
 	res.send(JSON.stringify(data));
 });
 
-router.put("/:id", validate(presetSchema), async (req, res) => {
+router.put("/:userid/preset/:id", validate(presetSchema), async (req, res) => {
+	const userid = req.params.userid;
 	const id = req.params.id;
 
-	const data = await updateData("preset_coins", id, req.body);
+	const data = await updateData(`users/${userid}/presets`, id, req.body);
 
 	res.send(JSON.stringify(data));
 });

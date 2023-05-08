@@ -20,7 +20,9 @@ const Presets = () => {
 	const navigate = useNavigate();
 
 	async function fetchPresets() {
-		await fetch(`${state.serverURL}/presets?order=initial_emission_date`)
+		await fetch(
+			`${state.serverURL}/presets/${state.userUID}?order=initial_emission_date`
+		)
 			.then((response) => {
 				return response.json();
 			})
@@ -30,9 +32,12 @@ const Presets = () => {
 	}
 
 	async function handleDeletePreset(presetId: string) {
-		await fetch(`${state.serverURL}/presets/${presetId}`, {
-			method: "DELETE",
-		});
+		await fetch(
+			`${state.serverURL}/presets/${state.userUID}/preset/${presetId}`,
+			{
+				method: "DELETE",
+			}
+		);
 
 		fetchPresets();
 	}
