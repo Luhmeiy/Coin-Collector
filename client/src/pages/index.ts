@@ -1,3 +1,4 @@
+export { default as EditPreset } from "./EditPreset";
 export { default as EditCoin } from "./EditCoin";
 export { default as Home } from "./Home";
 export { default as Presets } from "./Presets";
