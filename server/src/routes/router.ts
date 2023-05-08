@@ -7,5 +7,5 @@ import { router as userRoutes } from "./userRoutes";
 export const router = express();
 
 router.use("/coins", coinRoutes);
-router.use("/preset_coins", presetCoinRouter);
+router.use("/presets", presetCoinRouter);
 router.use("/users", userRoutes);

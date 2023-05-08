@@ -56,7 +56,7 @@ router.delete("/:id", async (req, res) => {
 	res.send(JSON.stringify(data));
 });
 
-router.put("/:id", async (req, res) => {
+router.put("/:id", validate(presetSchema), async (req, res) => {
 	const id = req.params.id;
 
 	const data = await updateData("preset_coins", id, req.body);
