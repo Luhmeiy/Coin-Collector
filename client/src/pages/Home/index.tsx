@@ -3,6 +3,7 @@ import { ThemeContext } from "../../context";
 import { motion } from "framer-motion";
 import { PencilSimple, Trash } from "@phosphor-icons/react";
 import { useNavigate } from "react-router-dom";
+import { useDelete } from "../../hooks/useDelete";
 
 export interface coinData {
 	id: string;
@@ -17,6 +18,7 @@ const Home = () => {
 	const { state } = useContext(ThemeContext);
 	const [coins, setCoins] = useState<coinData[]>();
 
+	const deleteData = useDelete();
 	const navigate = useNavigate();
 
 	async function fetchCoins() {
@@ -30,12 +32,7 @@ const Home = () => {
 	}
 
 	async function handleDeleteCoin(coinId: string) {
-		await fetch(
-			`${state.serverURL}/coins/${state.userUID}/coin/${coinId}`,
-			{
-				method: "DELETE",
-			}
-		);
+		await deleteData(`coins/${state.userUID}/coin/${coinId}`);
 
 		fetchCoins();
 	}

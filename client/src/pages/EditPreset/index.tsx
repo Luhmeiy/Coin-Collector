@@ -3,12 +3,19 @@ import { motion } from "framer-motion";
 import { FormEvent, useContext, useEffect, useState } from "react";
 import { ThemeContext } from "../../context";
 import { X } from "@phosphor-icons/react";
+import { useUpdate } from "../../hooks/useUpdate";
+import { useGet } from "../../hooks/useGet";
 
 const EditPreset = () => {
 	const { presetId } = useParams();
 	const { state } = useContext(ThemeContext);
 
-	const [isLoading, setIsLoading] = useState<boolean>(true);
+	const update = useUpdate();
+	const { data, error } = useGet(
+		`presets/${state.userUID}/preset/${presetId}`
+	);
+
+	const [loading, setLoading] = useState(true);
 	const [name, setName] = useState<string>();
 	const [symbol, setSymbol] = useState<string>();
 	const [initialDate, setInitialDate] = useState<number>();
@@ -16,24 +23,6 @@ const EditPreset = () => {
 	const [valueRange, setValueRange] = useState<string>();
 
 	const navigate = useNavigate();
-
-	async function fetchPreset() {
-		await fetch(
-			`${state.serverURL}/presets/${state.userUID}/preset/${presetId}`
-		)
-			.then((response) => {
-				return response.json();
-			})
-			.then((data) => {
-				setName(data[0].name);
-				setSymbol(data[0].symbol);
-				setInitialDate(data[0].initial_emission_date);
-				setFinalDate(data[0].final_emission_date);
-				setValueRange(String(data[0].value_range));
-
-				setIsLoading(false);
-			});
-	}
 
 	async function handleSubmit(e: FormEvent) {
 		e.preventDefault();
@@ -46,23 +35,25 @@ const EditPreset = () => {
 			value_range: valueRange?.split(",").map(Number),
 		};
 
-		await fetch(
-			`${state.serverURL}/presets/${state.userUID}/preset/${presetId}`,
-			{
-				method: "PUT",
-				headers: {
-					"Content-type": "application/json",
-				},
-				body: JSON.stringify(data),
-			}
-		)
+		await update(`presets/${state.userUID}/preset/${presetId}`, data)
 			.then(() => navigate("/presets"))
 			.catch((error) => console.log(error));
 	}
 
 	useEffect(() => {
-		fetchPreset();
-	}, []);
+		if (data) {
+			setName(data[0].name);
+			setSymbol(data[0].symbol);
+			setInitialDate(data[0].initial_emission_date);
+			setFinalDate(data[0].final_emission_date);
+			setValueRange(String(data[0].value_range));
+
+			setLoading(false);
+		}
+	}, [data]);
+
+	if (error) console.log(error);
+	if (loading) <p>Loading...</p>;
 
 	return (
 		<motion.div
@@ -87,7 +78,7 @@ const EditPreset = () => {
 					Edit Preset
 				</h1>
 
-				{!isLoading && (
+				{!loading && (
 					<form
 						className="grid grid-cols-5 gap-5"
 						onSubmit={(e) => handleSubmit(e)}

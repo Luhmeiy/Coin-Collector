@@ -1,12 +1,12 @@
 import { useContext } from "react";
 import { ThemeContext } from "../context";
 
-export const useUpdateUser = () => {
+export const usePost = () => {
 	const { state } = useContext(ThemeContext);
 
-	const updateUser = async (data: object) => {
-		await fetch(`${state.serverURL}/users/${state.userUID}`, {
-			method: "PUT",
+	const postData = async (url: string, data: object) => {
+		await fetch(`${state.serverURL}/${url}`, {
+			method: "POST",
 			headers: {
 				"Content-type": "application/json",
 			},
@@ -14,5 +14,5 @@ export const useUpdateUser = () => {
 		});
 	};
 
-	return updateUser;
+	return postData;
 };

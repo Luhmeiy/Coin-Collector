@@ -3,12 +3,17 @@ import { motion } from "framer-motion";
 import { FormEvent, useContext, useEffect, useState } from "react";
 import { ThemeContext } from "../../context";
 import { X } from "@phosphor-icons/react";
+import { useUpdate } from "../../hooks/useUpdate";
+import { useGet } from "../../hooks/useGet";
 
 const EditCoin = () => {
 	const { coinId } = useParams();
 	const { state } = useContext(ThemeContext);
 
-	const [isLoading, setIsLoading] = useState<boolean>(true);
+	const update = useUpdate();
+	const { data, error } = useGet(`coins/${state.userUID}/coin/${coinId}`);
+
+	const [loading, setLoading] = useState(true);
 	const [name, setName] = useState<string>();
 	const [symbol, setSymbol] = useState<string>();
 	const [value, setValue] = useState<number>();
@@ -16,22 +21,6 @@ const EditCoin = () => {
 	const [quantity, setQuantity] = useState<number>();
 
 	const navigate = useNavigate();
-
-	async function fetchCoin() {
-		await fetch(`${state.serverURL}/coins/${state.userUID}/coin/${coinId}`)
-			.then((response) => {
-				return response.json();
-			})
-			.then((data) => {
-				setName(data[0].name);
-				setSymbol(data[0].symbol);
-				setValue(data[0].value);
-				setYear(data[0].year);
-				setQuantity(data[0].quantity);
-
-				setIsLoading(false);
-			});
-	}
 
 	async function handleSubmit(e: FormEvent) {
 		e.preventDefault();
@@ -44,23 +33,25 @@ const EditCoin = () => {
 			quantity,
 		};
 
-		await fetch(
-			`${state.serverURL}/coins/${state.userUID}/coin/${coinId}`,
-			{
-				method: "PUT",
-				headers: {
-					"Content-type": "application/json",
-				},
-				body: JSON.stringify(data),
-			}
-		)
+		await update(`coins/${state.userUID}/coin/${coinId}`, data)
 			.then(() => navigate("/"))
 			.catch((error) => console.log(error));
 	}
 
 	useEffect(() => {
-		fetchCoin();
-	}, []);
+		if (data) {
+			setName(data[0].name);
+			setSymbol(data[0].symbol);
+			setValue(data[0].value);
+			setYear(data[0].year);
+			setQuantity(data[0].quantity);
+
+			setLoading(false);
+		}
+	}, [data]);
+
+	if (error) console.log(error);
+	if (loading) <p>Loading...</p>;
 
 	return (
 		<motion.div
@@ -85,7 +76,7 @@ const EditCoin = () => {
 					Edit Coin
 				</h1>
 
-				{!isLoading && (
+				{!loading && (
 					<form
 						className="grid grid-cols-5 gap-5"
 						onSubmit={(e) => handleSubmit(e)}

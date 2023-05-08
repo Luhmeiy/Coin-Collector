@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { ThemeContext } from "../../context";
 import { motion } from "framer-motion";
 import { PencilSimple, Trash } from "@phosphor-icons/react";
+import { useDelete } from "../../hooks/useDelete";
 
 interface presetData {
 	id: string;
@@ -17,6 +18,7 @@ const Presets = () => {
 	const { state } = useContext(ThemeContext);
 	const [presets, setPresets] = useState<presetData[]>();
 
+	const deleteData = useDelete();
 	const navigate = useNavigate();
 
 	async function fetchPresets() {
@@ -32,12 +34,7 @@ const Presets = () => {
 	}
 
 	async function handleDeletePreset(presetId: string) {
-		await fetch(
-			`${state.serverURL}/presets/${state.userUID}/preset/${presetId}`,
-			{
-				method: "DELETE",
-			}
-		);
+		await deleteData(`presets/${state.userUID}/preset/${presetId}`);
 
 		fetchPresets();
 	}

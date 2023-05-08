@@ -6,11 +6,16 @@ import { useContext } from "react";
 import { ThemeContext } from "../../context";
 import { ACTIONS } from "../../utils/reducer";
 import { motion } from "framer-motion";
+import { usePost } from "../../hooks/usePost";
+import { useGet } from "../../hooks/useGet";
 
 const SignIn = () => {
 	const { state, dispatch } = useContext(ThemeContext);
 
+	const post = usePost();
 	const navigate = useNavigate();
+
+	const basePresets = useGet("presets").data;
 
 	function handleGoogleSignIn() {
 		const provider = new GoogleAuthProvider();
@@ -59,26 +64,10 @@ const SignIn = () => {
 			mode: "light-mode",
 		};
 
-		const basePresets = await fetch(`${state.serverURL}/presets`).then(
-			(response) => response.json()
-		);
-
-		await fetch(`${state.serverURL}/users`, {
-			method: "POST",
-			headers: {
-				"Content-type": "application/json",
-			},
-			body: JSON.stringify(data),
-		})
+		await post("users", data)
 			.then(async () => {
 				for (const basePreset of basePresets) {
-					await fetch(`${state.serverURL}/presets/${uid}`, {
-						method: "POST",
-						headers: {
-							"Content-type": "application/json",
-						},
-						body: JSON.stringify(basePreset),
-					});
+					await post(`presets/${uid}`, basePreset);
 				}
 			})
 			.then(() => login(uid));
