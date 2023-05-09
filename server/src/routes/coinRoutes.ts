@@ -23,14 +23,14 @@ router.get("/:userid", async (req, res) => {
 router.post("/:userid", validate(coinSchema), async (req, res) => {
 	const userid = req.params.userid;
 
-	const { name, symbol, value, year } = req.body;
+	const { name, symbol, value, year, quantity } = req.body;
 
 	const coinData = {
 		name,
 		symbol,
 		value,
 		year,
-		quantity: 1,
+		quantity,
 	};
 
 	verifyIfCoinExists(`users/${userid}/coins`, coinData).then(

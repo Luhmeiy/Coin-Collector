@@ -55,10 +55,30 @@ const Home = () => {
 			>
 				{state.user && (
 					<>
-						<div className="h-[20%] flex items-center border-b-8 border-b-black p-5">
+						<div className="min-h-[20%] flex items-center justify-between border-b-8 border-b-black p-5">
 							<h1 className="text-2xl font-bold mb-2">
 								Welcome, {state.user.displayName}
 							</h1>
+
+							<div className="flex flex-col items-stretch gap-2">
+								<button
+									className={`flex justify-center bg-${state.theme} text-black rounded-md px-6 py-2 hover:brightness-90 active:brightness-110`}
+									onClick={() => navigate("/add/coin")}
+								>
+									Add Coin
+								</button>
+								<button
+									className={`flex justify-center bg-${state.theme} text-black rounded-md px-6 py-2 hover:brightness-90 active:brightness-110`}
+									onClick={() => navigate("/add/preset")}
+								>
+									Add Preset
+								</button>
+								<button
+									className={`flex justify-center bg-${state.theme} text-black rounded-md px-6 py-2 hover:brightness-90 active:brightness-110`}
+								>
+									Edit User
+								</button>
+							</div>
 						</div>
 
 						{coins && (

@@ -1,5 +1,5 @@
 import { Route, Routes, useLocation } from "react-router-dom";
-import { EditCoin, EditPreset, Home, Presets, SignIn } from "../../pages";
+import { Coin, EditPreset, Home, Presets, SignIn } from "../../pages";
 import { AnimatePresence } from "framer-motion";
 import { Navbar } from "../";
 
@@ -14,7 +14,9 @@ const AnimatedRoutes = () => {
 				<Route path="/" element={<Home />} />
 				<Route path="/register" element={<SignIn />} />
 				<Route path="/presets" element={<Presets />} />
-				<Route path="/edit/coin/:coinId" element={<EditCoin />} />
+				<Route path="/add/coin" element={<Coin />} />
+				<Route path="/add/preset" element={<EditPreset />} />
+				<Route path="/edit/coin/:coinId" element={<Coin />} />
 				<Route path="/edit/preset/:presetId" element={<EditPreset />} />
 			</Routes>
 		</AnimatePresence>

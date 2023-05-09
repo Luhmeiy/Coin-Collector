@@ -4,16 +4,16 @@ import { FormEvent, useContext, useEffect, useState } from "react";
 import { ThemeContext } from "../../context";
 import { X } from "@phosphor-icons/react";
 import { useUpdate } from "../../hooks/useUpdate";
-import { useGet } from "../../hooks/useGet";
+import { usePost } from "../../hooks/usePost";
 
-const EditCoin = () => {
+const Coin = () => {
 	const { coinId } = useParams();
 	const { state } = useContext(ThemeContext);
 
 	const update = useUpdate();
-	const { data, error } = useGet(`coins/${state.userUID}/coin/${coinId}`);
+	const post = usePost();
 
-	const [loading, setLoading] = useState(true);
+	const [loading, setLoading] = useState<boolean>(true);
 	const [name, setName] = useState<string>();
 	const [symbol, setSymbol] = useState<string>();
 	const [value, setValue] = useState<number>();
@@ -21,6 +21,22 @@ const EditCoin = () => {
 	const [quantity, setQuantity] = useState<number>();
 
 	const navigate = useNavigate();
+
+	async function fetchCoin() {
+		await fetch(`${state.serverURL}/coins/${state.userUID}/coin/${coinId}`)
+			.then((response) => {
+				return response.json();
+			})
+			.then((data) => {
+				setName(data[0].name);
+				setSymbol(data[0].symbol);
+				setValue(data[0].value);
+				setYear(data[0].year);
+				setQuantity(data[0].quantity);
+
+				setLoading(false);
+			});
+	}
 
 	async function handleSubmit(e: FormEvent) {
 		e.preventDefault();
@@ -33,25 +49,24 @@ const EditCoin = () => {
 			quantity,
 		};
 
-		await update(`coins/${state.userUID}/coin/${coinId}`, data)
-			.then(() => navigate("/"))
-			.catch((error) => console.log(error));
+		if (coinId) {
+			await update(`coins/${state.userUID}/coin/${coinId}`, data)
+				.then(() => navigate("/"))
+				.catch((error) => console.log(error));
+		} else {
+			await post(`coins/${state.userUID}`, data).catch((error) =>
+				console.log(error)
+			);
+		}
 	}
 
 	useEffect(() => {
-		if (data) {
-			setName(data[0].name);
-			setSymbol(data[0].symbol);
-			setValue(data[0].value);
-			setYear(data[0].year);
-			setQuantity(data[0].quantity);
-
+		if (coinId) {
+			fetchCoin();
+		} else {
 			setLoading(false);
 		}
-	}, [data]);
-
-	if (error) console.log(error);
-	if (loading) <p>Loading...</p>;
+	}, []);
 
 	return (
 		<motion.div
@@ -73,7 +88,7 @@ const EditCoin = () => {
 
 			<div className="w-[50%]">
 				<h1 className="text-4xl font-bold text-center mb-5">
-					Edit Coin
+					{coinId ? "Edit" : "Add"} Coin
 				</h1>
 
 				{!loading && (
@@ -158,7 +173,7 @@ const EditCoin = () => {
 						</div>
 
 						<button className="col-start-2 col-span-3 flex justify-center self-center bg-green-500 text-white font-semibold rounded-md px-6 py-2 mt-2 hover:bg-green-600 active:bg-green-400">
-							Edit
+							{coinId ? "Edit" : "Add"}
 						</button>
 					</form>
 				)}
@@ -167,4 +182,4 @@ const EditCoin = () => {
 	);
 };
 
-export default EditCoin;
+export default Coin;
