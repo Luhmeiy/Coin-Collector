@@ -6,12 +6,12 @@ export const presetSchema = z.object({
 			.number({
 				required_error: "Final emission date is required",
 			})
-			.max(4, { message: "Must be less than 4 characters long" }),
+			.min(4, { message: "Must be 4 characters long" }),
 		initial_emission_date: z
 			.number({
 				required_error: "Initial emission date is required",
 			})
-			.max(4, { message: "Must be less than 4 characters long" }),
+			.min(4, { message: "Must be 4 characters long" }),
 		name: z.string({
 			required_error: "Name is required",
 		}),

@@ -145,9 +145,10 @@ const Coin = () => {
 								Year
 							</label>
 							<input
-								type="number"
+								type="text"
 								id="year"
 								className="w-full block bg-gray-50 dark:bg-slate-600 border border-gray-300 p-3 dark:border-gray-600 rounded-md text-sm dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+								maxLength={4}
 								value={year}
 								onChange={(e) =>
 									setYear(Number(e.target.value))
