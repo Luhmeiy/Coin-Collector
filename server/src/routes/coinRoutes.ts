@@ -74,7 +74,27 @@ router.put("/:userid/coin/:id", validate(coinSchema), async (req, res) => {
 	const userid = req.params.userid;
 	const id = req.params.id;
 
-	const data = await updateData(`users/${userid}/coins`, id, req.body);
+	verifyIfCoinExists(`users/${userid}/coins`, req.body).then(
+		async (results) => {
+			if (results.length > 0) {
+				const { id, quantity } = results[0];
 
-	res.send(JSON.stringify(data));
+				await deleteData(`users/${userid}/coins`, req.params.id);
+
+				const data = await updateData(`users/${userid}/coins`, id, {
+					quantity: quantity + req.body.quantity,
+				});
+
+				res.send(JSON.stringify(data));
+			} else {
+				const data = await updateData(
+					`users/${userid}/coins`,
+					id,
+					req.body
+				);
+
+				res.send(JSON.stringify(data));
+			}
+		}
+	);
 });
