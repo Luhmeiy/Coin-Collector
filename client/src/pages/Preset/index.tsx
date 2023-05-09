@@ -4,18 +4,16 @@ import { FormEvent, useContext, useEffect, useState } from "react";
 import { ThemeContext } from "../../context";
 import { X } from "@phosphor-icons/react";
 import { useUpdate } from "../../hooks/useUpdate";
-import { useGet } from "../../hooks/useGet";
+import { usePost } from "../../hooks/usePost";
 
-const EditPreset = () => {
+const Preset = () => {
 	const { presetId } = useParams();
 	const { state } = useContext(ThemeContext);
 
 	const update = useUpdate();
-	const { data, error } = useGet(
-		`presets/${state.userUID}/preset/${presetId}`
-	);
+	const post = usePost();
 
-	const [loading, setLoading] = useState(true);
+	const [loading, setLoading] = useState<boolean>(true);
 	const [name, setName] = useState<string>();
 	const [symbol, setSymbol] = useState<string>();
 	const [initialDate, setInitialDate] = useState<number>();
@@ -23,6 +21,24 @@ const EditPreset = () => {
 	const [valueRange, setValueRange] = useState<string>();
 
 	const navigate = useNavigate();
+
+	async function fetchPreset() {
+		await fetch(
+			`${state.serverURL}/presets/${state.userUID}/preset/${presetId}`
+		)
+			.then((response) => {
+				return response.json();
+			})
+			.then((data) => {
+				setName(data[0].name);
+				setSymbol(data[0].symbol);
+				setInitialDate(data[0].initial_emission_date);
+				setFinalDate(data[0].final_emission_date);
+				setValueRange(data[0].value_range);
+
+				setLoading(false);
+			});
+	}
 
 	async function handleSubmit(e: FormEvent) {
 		e.preventDefault();
@@ -32,28 +48,30 @@ const EditPreset = () => {
 			symbol,
 			initial_emission_date: initialDate,
 			final_emission_date: finalDate,
-			value_range: valueRange?.split(",").map(Number),
+			value_range:
+				typeof valueRange === "object"
+					? valueRange
+					: valueRange?.split(",").map(Number),
 		};
 
-		await update(`presets/${state.userUID}/preset/${presetId}`, data)
-			.then(() => navigate("/presets"))
-			.catch((error) => console.log(error));
+		if (presetId) {
+			await update(`presets/${state.userUID}/preset/${presetId}`, data)
+				.then(() => navigate("/presets"))
+				.catch((error) => console.log(error));
+		} else {
+			await post(`presets/${state.userUID}`, data).catch((error) =>
+				console.log(error)
+			);
+		}
 	}
 
 	useEffect(() => {
-		if (data) {
-			setName(data[0].name);
-			setSymbol(data[0].symbol);
-			setInitialDate(data[0].initial_emission_date);
-			setFinalDate(data[0].final_emission_date);
-			setValueRange(String(data[0].value_range));
-
+		if (presetId) {
+			fetchPreset();
+		} else {
 			setLoading(false);
 		}
-	}, [data]);
-
-	if (error) console.log(error);
-	if (loading) <p>Loading...</p>;
+	}, []);
 
 	return (
 		<motion.div
@@ -68,14 +86,16 @@ const EditPreset = () => {
 		>
 			<button
 				className="absolute top-4 right-4"
-				onClick={() => navigate("/presets")}
+				onClick={() =>
+					presetId ? navigate("/presets") : navigate("/")
+				}
 			>
 				<X size={24} weight="bold" />
 			</button>
 
 			<div className="w-[50%]">
 				<h1 className="text-4xl font-bold text-center mb-5">
-					Edit Preset
+					{presetId ? "Edit" : "Add"} Preset
 				</h1>
 
 				{!loading && (
@@ -91,7 +111,7 @@ const EditPreset = () => {
 								type="text"
 								id="name"
 								className="w-full block bg-gray-50 dark:bg-slate-600 border border-gray-300 p-3 dark:border-gray-600 rounded-md text-sm dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-								value={name}
+								value={name || ""}
 								onChange={(e) => setName(e.target.value)}
 								required
 							/>
@@ -105,7 +125,7 @@ const EditPreset = () => {
 								type="text"
 								id="symbol"
 								className="w-full block bg-gray-50 dark:bg-slate-600 border border-gray-300 p-3 dark:border-gray-600 rounded-md text-sm dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-								value={symbol}
+								value={symbol || ""}
 								onChange={(e) => setSymbol(e.target.value)}
 								required
 							/>
@@ -116,10 +136,11 @@ const EditPreset = () => {
 								Initial Emission Date
 							</label>
 							<input
-								type="number"
-								id="value"
+								type="string"
+								id="initial-date"
 								className="w-full block bg-gray-50 dark:bg-slate-600 border border-gray-300 p-3 dark:border-gray-600 rounded-md text-sm dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-								value={initialDate}
+								maxLength={4}
+								value={initialDate || ""}
 								onChange={(e) =>
 									setInitialDate(Number(e.target.value))
 								}
@@ -132,10 +153,11 @@ const EditPreset = () => {
 								Final Emission Date
 							</label>
 							<input
-								type="number"
-								id="year"
+								type="string"
+								id="final-date"
 								className="w-full block bg-gray-50 dark:bg-slate-600 border border-gray-300 p-3 dark:border-gray-600 rounded-md text-sm dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-								value={finalDate}
+								maxLength={4}
+								value={finalDate || ""}
 								onChange={(e) =>
 									setFinalDate(Number(e.target.value))
 								}
@@ -145,20 +167,20 @@ const EditPreset = () => {
 
 						<div className="col-span-5">
 							<label className="block mb-2 text-md font-semibold dark:text-white">
-								Quantity
+								Value Range
 							</label>
 							<input
 								type="text"
-								id="quantity"
+								id="value-range"
 								className="w-full block bg-gray-50 dark:bg-slate-600 border border-gray-300 p-3 dark:border-gray-600 rounded-md text-sm dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-								value={valueRange}
+								value={valueRange || ""}
 								onChange={(e) => setValueRange(e.target.value)}
 								required
 							/>
 						</div>
 
 						<button className="col-start-2 col-span-3 flex justify-center self-center bg-green-500 text-white font-semibold rounded-md px-6 py-2 mt-2 hover:bg-green-600 active:bg-green-400">
-							Edit
+							{presetId ? "Edit" : "Add"}
 						</button>
 					</form>
 				)}
@@ -167,4 +189,4 @@ const EditPreset = () => {
 	);
 };
 
-export default EditPreset;
+export default Preset;
