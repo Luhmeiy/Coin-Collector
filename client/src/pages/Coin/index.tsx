@@ -1,10 +1,11 @@
 import { useNavigate, useParams } from "react-router-dom";
-import { motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { FormEvent, useContext, useEffect, useState } from "react";
 import { ThemeContext } from "../../context";
 import { X } from "@phosphor-icons/react";
 import { useUpdate } from "../../hooks/useUpdate";
 import { usePost } from "../../hooks/usePost";
+import { Message } from "../../components";
 
 const Coin = () => {
 	const { coinId } = useParams();
@@ -14,6 +15,8 @@ const Coin = () => {
 	const post = usePost();
 
 	const [loading, setLoading] = useState<boolean>(true);
+	const [success, setSuccess] = useState<boolean>(false);
+
 	const [name, setName] = useState<string>();
 	const [symbol, setSymbol] = useState<string>();
 	const [value, setValue] = useState<number>();
@@ -54,9 +57,12 @@ const Coin = () => {
 				.then(() => navigate("/"))
 				.catch((error) => console.log(error));
 		} else {
-			await post(`coins/${state.userUID}`, data).catch((error) =>
-				console.log(error)
-			);
+			await post(`coins/${state.userUID}`, data)
+				.then(() => {
+					setSuccess(true);
+					setTimeout(() => setSuccess(false), 3000);
+				})
+				.catch((error) => console.log(error));
 		}
 	}
 
@@ -176,6 +182,12 @@ const Coin = () => {
 						<button className="col-start-2 col-span-3 flex justify-center self-center bg-green-500 text-white font-semibold rounded-md px-6 py-2 mt-2 hover:bg-green-600 active:bg-green-400">
 							{coinId ? "Edit" : "Add"}
 						</button>
+
+						<AnimatePresence>
+							{success && (
+								<Message message="Coin added successfully" />
+							)}
+						</AnimatePresence>
 					</form>
 				)}
 			</div>

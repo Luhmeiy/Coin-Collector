@@ -73,11 +73,6 @@ const Home = () => {
 								>
 									Add Preset
 								</button>
-								<button
-									className={`flex justify-center bg-${state.theme} text-black rounded-md px-6 py-2 hover:brightness-90 active:brightness-110`}
-								>
-									Edit User
-								</button>
 							</div>
 						</div>
 
