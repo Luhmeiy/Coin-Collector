@@ -4,6 +4,11 @@ import { ThemeContext } from "../../context";
 import { motion } from "framer-motion";
 import { PencilSimple, Trash } from "@phosphor-icons/react";
 import { useDelete } from "../../hooks/useDelete";
+import {
+	PropertyProps,
+	SortSettingsProps,
+} from "../../interfaces/SortingProps";
+import { sortData } from "../../utils/sortData";
 
 interface presetData {
 	id: string;
@@ -17,6 +22,10 @@ interface presetData {
 const Presets = () => {
 	const { state } = useContext(ThemeContext);
 	const [presets, setPresets] = useState<presetData[]>();
+	const [sortSettings, setSortSettings] = useState<SortSettingsProps>({
+		property: "name",
+		asc: true,
+	});
 
 	const deleteData = useDelete();
 	const navigate = useNavigate();
@@ -37,6 +46,19 @@ const Presets = () => {
 		await deleteData(`presets/${state.userUID}/preset/${presetId}`);
 
 		fetchPresets();
+	}
+
+	function handleSortData(property: PropertyProps) {
+		if (presets) {
+			const { newSort, sortedData } = sortData(
+				presets,
+				sortSettings,
+				property
+			);
+
+			setSortSettings(newSort);
+			setPresets(sortedData);
+		}
 	}
 
 	useEffect(() => {
@@ -76,10 +98,33 @@ const Presets = () => {
 								<div
 									className={`grid grid-cols-6 items-center border-b-2 bg-${state.theme} border-black text-xl font-bold text-black p-5`}
 								>
-									<p>Preset Name</p>
+									<p
+										onClick={() => handleSortData("name")}
+										className="cursor-pointer"
+									>
+										Preset Name
+									</p>
 									<p>Symbol</p>
-									<p>Initial Emission Date</p>
-									<p>Final Emission Date</p>
+									<p
+										onClick={() =>
+											handleSortData(
+												"initial_emission_date"
+											)
+										}
+										className="cursor-pointer"
+									>
+										Initial Emission Date
+									</p>
+									<p
+										onClick={() =>
+											handleSortData(
+												"final_emission_date"
+											)
+										}
+										className="cursor-pointer"
+									>
+										Final Emission Date
+									</p>
 									<p>Value Range</p>
 									<p>Actions</p>
 								</div>

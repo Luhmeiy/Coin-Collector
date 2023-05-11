@@ -4,8 +4,13 @@ import { motion } from "framer-motion";
 import { PencilSimple, Trash } from "@phosphor-icons/react";
 import { useNavigate } from "react-router-dom";
 import { useDelete } from "../../hooks/useDelete";
+import { sortData } from "../../utils/sortData";
+import {
+	PropertyProps,
+	SortSettingsProps,
+} from "../../interfaces/SortingProps";
 
-export interface coinData {
+interface CoinData {
 	id: string;
 	name: string;
 	symbol: string;
@@ -16,7 +21,11 @@ export interface coinData {
 
 const Home = () => {
 	const { state } = useContext(ThemeContext);
-	const [coins, setCoins] = useState<coinData[]>();
+	const [coins, setCoins] = useState<CoinData[]>();
+	const [sortSettings, setSortSettings] = useState<SortSettingsProps>({
+		property: "name",
+		asc: true,
+	});
 
 	const deleteData = useDelete();
 	const navigate = useNavigate();
@@ -35,6 +44,19 @@ const Home = () => {
 		await deleteData(`coins/${state.userUID}/coin/${coinId}`);
 
 		fetchCoins();
+	}
+
+	function handleSortData(property: PropertyProps) {
+		if (coins) {
+			const { newSort, sortedData } = sortData(
+				coins,
+				sortSettings,
+				property
+			);
+
+			setSortSettings(newSort);
+			setCoins(sortedData);
+		}
 	}
 
 	useEffect(() => {
@@ -79,12 +101,34 @@ const Home = () => {
 						{coins && (
 							<div>
 								<div
-									className={`grid grid-cols-5 border-b-2 bg-${state.theme} border-black text-xl font-bold text-black p-5`}
+									className={`grid grid-cols-5 border-b-2 bg-${state.theme} border-black text-xl font-bold text-black p-5 select-none`}
 								>
-									<p>Coin</p>
-									<p>Value</p>
-									<p>Year</p>
-									<p>Quantity</p>
+									<p
+										onClick={() => handleSortData("name")}
+										className="cursor-pointer"
+									>
+										Coin
+									</p>
+									<p
+										onClick={() => handleSortData("value")}
+										className="cursor-pointer"
+									>
+										Value
+									</p>
+									<p
+										onClick={() => handleSortData("year")}
+										className="cursor-pointer"
+									>
+										Year
+									</p>
+									<p
+										onClick={() =>
+											handleSortData("quantity")
+										}
+										className="cursor-pointer"
+									>
+										Quantity
+									</p>
 									<p>Actions</p>
 								</div>
 
