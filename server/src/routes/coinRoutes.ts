@@ -11,11 +11,19 @@ import { coinSchema } from "../schemas/Coin";
 
 export const router = express.Router();
 
+type DirectionTypeProps = "asc" | "desc";
+
 router.get("/:userid", async (req, res) => {
 	const orderType = req.query.order || "name";
+	const directionType: DirectionTypeProps =
+		(req.query.direction as DirectionTypeProps) || "asc";
 	const userid = req.params.userid;
 
-	const data = await getData(`users/${userid}/coins`, String(orderType));
+	const data = await getData(
+		`users/${userid}/coins`,
+		String(orderType),
+		directionType
+	);
 
 	res.send(JSON.stringify(data));
 });
@@ -56,7 +64,12 @@ router.get("/:userid/coin/:id", async (req, res) => {
 	const userid = req.params.userid;
 	const id = req.params.id;
 
-	const data = await getData(`users/${userid}/coins`, undefined, id);
+	const data = await getData(
+		`users/${userid}/coins`,
+		undefined,
+		undefined,
+		id
+	);
 
 	res.send(JSON.stringify(data));
 });

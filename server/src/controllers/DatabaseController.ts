@@ -30,7 +30,12 @@ interface coinData {
 	quantity: number;
 }
 
-export const getData = async (path: string, order?: string, id?: string) => {
+export const getData = async (
+	path: string,
+	order?: string,
+	direction?: "asc" | "desc",
+	id?: string
+) => {
 	let data: DocumentData[] = [];
 
 	if (id) {
@@ -44,7 +49,7 @@ export const getData = async (path: string, order?: string, id?: string) => {
 		}
 	} else {
 		const dbRef = collection(db, path);
-		const q = query(dbRef, orderBy(order!));
+		const q = query(dbRef, orderBy(order!, direction!));
 		const docsSnap = await getDocs(q);
 
 		docsSnap.forEach((doc) => {

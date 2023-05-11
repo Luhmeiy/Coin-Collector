@@ -20,7 +20,7 @@ router.post("/", validate(userSchema), async (req, res) => {
 router.get("/:userid", async (req, res) => {
 	const userid = req.params.userid;
 
-	const data = await getData("users", undefined, userid);
+	const data = await getData("users", undefined, undefined, userid);
 
 	res.send(JSON.stringify(data));
 });

@@ -10,6 +10,8 @@ import { presetSchema } from "../schemas/Preset";
 
 export const router = express.Router();
 
+type DirectionTypeProps = "asc" | "desc";
+
 router.get("/", async (req, res) => {
 	const orderType = req.query.order || "name";
 
@@ -20,9 +22,15 @@ router.get("/", async (req, res) => {
 
 router.get("/:userid", async (req, res) => {
 	const userid = req.params.userid;
+	const directionType: DirectionTypeProps =
+		(req.query.direction as DirectionTypeProps) || "asc";
 	const orderType = req.query.order || "name";
 
-	const data = await getData(`users/${userid}/presets`, String(orderType));
+	const data = await getData(
+		`users/${userid}/presets`,
+		String(orderType),
+		directionType
+	);
 
 	res.send(JSON.stringify(data));
 });
@@ -55,7 +63,12 @@ router.get("/:userid/preset/:id", async (req, res) => {
 	const userid = req.params.userid;
 	const id = req.params.id;
 
-	const data = await getData(`users/${userid}/presets`, undefined, id);
+	const data = await getData(
+		`users/${userid}/presets`,
+		undefined,
+		undefined,
+		id
+	);
 
 	res.send(JSON.stringify(data));
 });

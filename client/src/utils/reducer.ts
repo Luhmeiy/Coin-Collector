@@ -9,6 +9,14 @@ interface userData {
 	email: string;
 	displayName: string;
 	photoURL: string;
+	coinSortSettings?: {
+		asc: boolean;
+		property: string;
+	};
+	presetSortSettings?: {
+		asc: boolean;
+		property: string;
+	};
 }
 
 export interface stateData {

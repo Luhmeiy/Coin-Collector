@@ -9,6 +9,8 @@ import {
 	PropertyProps,
 	SortSettingsProps,
 } from "../../interfaces/SortingProps";
+import { useUpdate } from "../../hooks/useUpdate";
+import Arrow from "../../components/Arrow";
 
 interface CoinData {
 	id: string;
@@ -28,10 +30,15 @@ const Home = () => {
 	});
 
 	const deleteData = useDelete();
+	const update = useUpdate();
 	const navigate = useNavigate();
 
 	async function fetchCoins() {
-		await fetch(`${state.serverURL}/coins/${state.userUID}`)
+		await fetch(
+			`${state.serverURL}/coins/${state.userUID}?order=${
+				sortSettings?.property
+			}&direction=${sortSettings.asc ? "asc" : "desc"}`
+		)
 			.then((response) => {
 				return response.json();
 			})
@@ -56,12 +63,20 @@ const Home = () => {
 
 			setSortSettings(newSort);
 			setCoins(sortedData);
+
+			update(`users/${state.userUID}`, { coinSortSettings: newSort });
 		}
 	}
 
 	useEffect(() => {
-		fetchCoins();
-	}, []);
+		if (state.user) {
+			if (state.user.coinSortSettings) {
+				setSortSettings(state.user.coinSortSettings);
+			}
+
+			fetchCoins();
+		}
+	}, [state.user]);
 
 	return (
 		<>
@@ -105,29 +120,50 @@ const Home = () => {
 								>
 									<p
 										onClick={() => handleSortData("name")}
-										className="cursor-pointer"
+										className="flex items-center gap-1 cursor-pointer"
 									>
 										Coin
+										{sortSettings.property === "name" && (
+											<Arrow
+												direction={sortSettings.asc}
+											/>
+										)}
 									</p>
 									<p
 										onClick={() => handleSortData("value")}
-										className="cursor-pointer"
+										className="flex items-center gap-1 cursor-pointer"
 									>
 										Value
+										{sortSettings.property === "value" && (
+											<Arrow
+												direction={sortSettings.asc}
+											/>
+										)}
 									</p>
 									<p
 										onClick={() => handleSortData("year")}
-										className="cursor-pointer"
+										className="flex items-center gap-1 cursor-pointer"
 									>
 										Year
+										{sortSettings.property === "year" && (
+											<Arrow
+												direction={sortSettings.asc}
+											/>
+										)}
 									</p>
 									<p
 										onClick={() =>
 											handleSortData("quantity")
 										}
-										className="cursor-pointer"
+										className="flex items-center gap-1 cursor-pointer"
 									>
 										Quantity
+										{sortSettings.property ===
+											"quantity" && (
+											<Arrow
+												direction={sortSettings.asc}
+											/>
+										)}
 									</p>
 									<p>Actions</p>
 								</div>

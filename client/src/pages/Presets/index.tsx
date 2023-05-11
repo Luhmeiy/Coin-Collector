@@ -9,6 +9,8 @@ import {
 	SortSettingsProps,
 } from "../../interfaces/SortingProps";
 import { sortData } from "../../utils/sortData";
+import { useUpdate } from "../../hooks/useUpdate";
+import Arrow from "../../components/Arrow";
 
 interface presetData {
 	id: string;
@@ -23,16 +25,19 @@ const Presets = () => {
 	const { state } = useContext(ThemeContext);
 	const [presets, setPresets] = useState<presetData[]>();
 	const [sortSettings, setSortSettings] = useState<SortSettingsProps>({
-		property: "name",
+		property: "initial_emission_date",
 		asc: true,
 	});
 
 	const deleteData = useDelete();
+	const update = useUpdate();
 	const navigate = useNavigate();
 
 	async function fetchPresets() {
 		await fetch(
-			`${state.serverURL}/presets/${state.userUID}?order=initial_emission_date`
+			`${state.serverURL}/presets/${state.userUID}?order=${
+				sortSettings?.property
+			}&direction=${sortSettings.asc ? "asc" : "desc"}`
 		)
 			.then((response) => {
 				return response.json();
@@ -58,12 +63,20 @@ const Presets = () => {
 
 			setSortSettings(newSort);
 			setPresets(sortedData);
+
+			update(`users/${state.userUID}`, { presetSortSettings: newSort });
 		}
 	}
 
 	useEffect(() => {
-		fetchPresets();
-	}, []);
+		if (state.user) {
+			if (state.user.presetSortSettings) {
+				setSortSettings(state.user.presetSortSettings);
+			}
+
+			fetchPresets();
+		}
+	}, [state.user]);
 
 	return (
 		<>
@@ -96,13 +109,18 @@ const Presets = () => {
 						{presets && (
 							<div>
 								<div
-									className={`grid grid-cols-6 items-center border-b-2 bg-${state.theme} border-black text-xl font-bold text-black p-5`}
+									className={`grid grid-cols-6 items-center border-b-2 bg-${state.theme} border-black text-xl font-bold text-black p-5 select-none`}
 								>
 									<p
 										onClick={() => handleSortData("name")}
-										className="cursor-pointer"
+										className="flex items-center gap-1 cursor-pointer"
 									>
 										Preset Name
+										{sortSettings.property === "name" && (
+											<Arrow
+												direction={sortSettings.asc}
+											/>
+										)}
 									</p>
 									<p>Symbol</p>
 									<p
@@ -111,9 +129,15 @@ const Presets = () => {
 												"initial_emission_date"
 											)
 										}
-										className="cursor-pointer"
+										className="flex items-center gap-1 cursor-pointer"
 									>
 										Initial Emission Date
+										{sortSettings.property ===
+											"initial_emission_date" && (
+											<Arrow
+												direction={sortSettings.asc}
+											/>
+										)}
 									</p>
 									<p
 										onClick={() =>
@@ -121,9 +145,15 @@ const Presets = () => {
 												"final_emission_date"
 											)
 										}
-										className="cursor-pointer"
+										className="flex items-center gap-1 cursor-pointer"
 									>
 										Final Emission Date
+										{sortSettings.property ===
+											"final_emission_date" && (
+											<Arrow
+												direction={sortSettings.asc}
+											/>
+										)}
 									</p>
 									<p>Value Range</p>
 									<p>Actions</p>
