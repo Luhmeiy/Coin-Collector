@@ -6,6 +6,7 @@ import { X } from "@phosphor-icons/react";
 import { useUpdate } from "../../hooks/useUpdate";
 import { usePost } from "../../hooks/usePost";
 import { Message } from "../../components";
+import { presetData } from "../../interfaces/PresetData";
 
 const Coin = () => {
 	const { coinId } = useParams();
@@ -16,6 +17,12 @@ const Coin = () => {
 
 	const [loading, setLoading] = useState<boolean>(true);
 	const [success, setSuccess] = useState<boolean>(false);
+
+	const [presetUse, setPresetUse] = useState<boolean>(false);
+	const [presets, setPresets] = useState<presetData[]>();
+	const [selectedPreset, setSelectedPreset] = useState<number>(0);
+
+	const [yearRange, setYearRange] = useState<number[]>();
 
 	const [name, setName] = useState<string>();
 	const [symbol, setSymbol] = useState<string>();
@@ -39,6 +46,62 @@ const Coin = () => {
 
 				setLoading(false);
 			});
+	}
+
+	async function fetchPresets() {
+		await fetch(`${state.serverURL}/presets/${state.userUID}`)
+			.then((response) => {
+				return response.json();
+			})
+			.then((data) => {
+				setPresets(data);
+				handleSelectedPreset(0);
+
+				setLoading(false);
+			});
+	}
+
+	function handlePresetUse() {
+		setPresetUse(!presetUse);
+
+		if (presetUse) {
+			setName("");
+			setSymbol("");
+			setValue(0);
+			setYear(0);
+			setQuantity(1);
+		} else {
+			handleSelectedPreset(0);
+		}
+	}
+
+	function handleSelectedPreset(index: number) {
+		if (presets) {
+			setSelectedPreset(index);
+
+			const {
+				name,
+				symbol,
+				value_range,
+				initial_emission_date,
+				final_emission_date,
+			} = presets[index];
+
+			setName(name);
+			setSymbol(symbol);
+			setValue(value_range[0]);
+			setYear(initial_emission_date);
+			setQuantity(1);
+
+			setYearRange(
+				Array.from(
+					{
+						length: final_emission_date - initial_emission_date + 1,
+					},
+					(_, index) => index + initial_emission_date
+				)
+			);
+		}
 	}
 
 	async function handleSubmit(e: FormEvent) {
@@ -70,7 +133,7 @@ const Coin = () => {
 		if (coinId) {
 			fetchCoin();
 		} else {
-			setLoading(false);
+			fetchPresets();
 		}
 	}, []);
 
@@ -98,97 +161,249 @@ const Coin = () => {
 				</h1>
 
 				{!loading && (
-					<form
-						className="grid grid-cols-5 gap-5"
-						onSubmit={(e) => handleSubmit(e)}
-					>
-						<div className="col-span-4">
-							<label className="block mb-2 text-md font-semibold dark:text-white">
-								Name
-							</label>
-							<input
-								type="text"
-								id="name"
-								className="w-full block bg-gray-50 dark:bg-slate-600 border border-gray-300 p-3 dark:border-gray-600 rounded-md text-sm dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-								value={name}
-								onChange={(e) => setName(e.target.value)}
-								required
-							/>
-						</div>
-
-						<div className="col-span-1">
-							<label className="block mb-2 text-md font-semibold dark:text-white">
-								Symbol
-							</label>
-							<input
-								type="text"
-								id="symbol"
-								className="w-full block bg-gray-50 dark:bg-slate-600 border border-gray-300 p-3 dark:border-gray-600 rounded-md text-sm dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-								value={symbol}
-								onChange={(e) => setSymbol(e.target.value)}
-								required
-							/>
-						</div>
-
-						<div className="col-span-2">
-							<label className="block mb-2 text-md font-semibold dark:text-white">
-								Value
-							</label>
-							<input
-								type="number"
-								id="value"
-								className="w-full block bg-gray-50 dark:bg-slate-600 border border-gray-300 p-3 dark:border-gray-600 rounded-md text-sm dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-								value={value}
-								onChange={(e) =>
-									setValue(Number(e.target.value))
-								}
-								required
-							/>
-						</div>
-
-						<div className="col-span-2">
-							<label className="block mb-2 text-md font-semibold dark:text-white">
-								Year
-							</label>
-							<input
-								type="text"
-								id="year"
-								className="w-full block bg-gray-50 dark:bg-slate-600 border border-gray-300 p-3 dark:border-gray-600 rounded-md text-sm dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-								maxLength={4}
-								value={year}
-								onChange={(e) =>
-									setYear(Number(e.target.value))
-								}
-								required
-							/>
-						</div>
-
-						<div className="col-span-1">
-							<label className="block mb-2 text-md font-semibold dark:text-white">
-								Quantity
-							</label>
-							<input
-								type="text"
-								id="quantity"
-								className="w-full block bg-gray-50 dark:bg-slate-600 border border-gray-300 p-3 dark:border-gray-600 rounded-md text-sm dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-								value={quantity}
-								onChange={(e) =>
-									setQuantity(Number(e.target.value))
-								}
-								required
-							/>
-						</div>
-
-						<button className="col-start-2 col-span-3 flex justify-center self-center bg-green-500 text-white font-semibold rounded-md px-6 py-2 mt-2 hover:bg-green-600 active:bg-green-400">
-							{coinId ? "Edit" : "Add"}
+					<div className="flex flex-col items-center">
+						<button
+							className={`bg-${state.theme} text-black rounded-md px-6 py-2 hover:brightness-90 active:brightness-110`}
+							onClick={handlePresetUse}
+						>
+							{!presetUse ? "Use Preset" : "Cancel"}
 						</button>
 
 						<AnimatePresence>
-							{success && (
-								<Message message="Coin added successfully" />
+							{!presetUse ? (
+								<form
+									className="grid grid-cols-5 gap-5"
+									onSubmit={(e) => handleSubmit(e)}
+								>
+									<div className="col-span-4">
+										<label className="block mb-2 text-md font-semibold dark:text-white">
+											Name
+										</label>
+										<input
+											type="text"
+											id="name"
+											className="w-full block bg-gray-50 dark:bg-slate-600 border border-gray-300 p-3 dark:border-gray-600 rounded-md text-sm dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+											value={name}
+											onChange={(e) =>
+												setName(e.target.value)
+											}
+											required
+										/>
+									</div>
+
+									<div className="col-span-1">
+										<label className="block mb-2 text-md font-semibold dark:text-white">
+											Symbol
+										</label>
+										<input
+											type="text"
+											id="symbol"
+											className="w-full block bg-gray-50 dark:bg-slate-600 border border-gray-300 p-3 dark:border-gray-600 rounded-md text-sm dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+											value={symbol}
+											onChange={(e) =>
+												setSymbol(e.target.value)
+											}
+											required
+										/>
+									</div>
+
+									<div className="col-span-2">
+										<label className="block mb-2 text-md font-semibold dark:text-white">
+											Value
+										</label>
+										<input
+											type="number"
+											id="value"
+											className="w-full block bg-gray-50 dark:bg-slate-600 border border-gray-300 p-3 dark:border-gray-600 rounded-md text-sm dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+											value={value}
+											onChange={(e) =>
+												setValue(Number(e.target.value))
+											}
+											required
+										/>
+									</div>
+
+									<div className="col-span-2">
+										<label className="block mb-2 text-md font-semibold dark:text-white">
+											Year
+										</label>
+										<input
+											type="text"
+											id="year"
+											className="w-full block bg-gray-50 dark:bg-slate-600 border border-gray-300 p-3 dark:border-gray-600 rounded-md text-sm dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+											maxLength={4}
+											value={year}
+											onChange={(e) =>
+												setYear(Number(e.target.value))
+											}
+											required
+										/>
+									</div>
+
+									<div className="col-span-1">
+										<label className="block mb-2 text-md font-semibold dark:text-white">
+											Quantity
+										</label>
+										<input
+											type="text"
+											id="quantity"
+											className="w-full block bg-gray-50 dark:bg-slate-600 border border-gray-300 p-3 dark:border-gray-600 rounded-md text-sm dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+											value={quantity}
+											onChange={(e) =>
+												setQuantity(
+													Number(e.target.value)
+												)
+											}
+											required
+										/>
+									</div>
+
+									<button className="col-start-2 col-span-3 flex justify-center self-center bg-green-500 text-white font-semibold rounded-md px-6 py-2 mt-2 hover:bg-green-600 active:bg-green-400">
+										{coinId ? "Edit" : "Add"}
+									</button>
+
+									<AnimatePresence>
+										{success && (
+											<Message message="Coin added successfully" />
+										)}
+									</AnimatePresence>
+								</form>
+							) : (
+								<form
+									className="grid grid-cols-5 gap-5"
+									onSubmit={(e) => handleSubmit(e)}
+								>
+									<div className="col-span-4">
+										<label className="block mb-2 text-md font-semibold dark:text-white">
+											Coin
+										</label>
+										<select
+											className="w-full block bg-gray-50 dark:bg-slate-600 border border-gray-300 p-3 dark:border-gray-600 rounded-md text-sm dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+											value={selectedPreset}
+											onChange={(e) =>
+												handleSelectedPreset(
+													+e.target.value
+												)
+											}
+											required
+										>
+											{presets &&
+												presets.map((preset, i) => (
+													<option
+														value={i}
+														key={preset.id}
+													>
+														{preset.name} (
+														{
+															preset.initial_emission_date
+														}
+														-
+														{
+															preset.final_emission_date
+														}
+														)
+													</option>
+												))}
+										</select>
+									</div>
+
+									<div className="col-span-1">
+										<label className="block mb-2 text-md font-semibold dark:text-white">
+											Symbol
+										</label>
+										<input
+											type="text"
+											id="symbol"
+											className="w-full block bg-gray-50 dark:bg-slate-600 border border-gray-300 p-3 dark:border-gray-600 rounded-md text-sm dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+											value={symbol}
+											onChange={(e) =>
+												setSymbol(e.target.value)
+											}
+											required
+										/>
+									</div>
+
+									<div className="col-span-2">
+										<label className="block mb-2 text-md font-semibold dark:text-white">
+											Value
+										</label>
+										<select
+											className="w-full block bg-gray-50 dark:bg-slate-600 border border-gray-300 p-3 dark:border-gray-600 rounded-md text-sm dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+											value={value}
+											onChange={(e) =>
+												setValue(+e.target.value)
+											}
+											required
+										>
+											{presets &&
+												presets[
+													selectedPreset
+												].value_range.map((value) => (
+													<option
+														value={value}
+														key={value}
+													>
+														{value}
+													</option>
+												))}
+										</select>
+									</div>
+
+									<div className="col-span-2">
+										<label className="block mb-2 text-md font-semibold dark:text-white">
+											Year
+										</label>
+										<select
+											className="w-full block bg-gray-50 dark:bg-slate-600 border border-gray-300 p-3 dark:border-gray-600 rounded-md text-sm dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+											value={year}
+											onChange={(e) =>
+												setYear(+e.target.value)
+											}
+											required
+										>
+											{yearRange &&
+												yearRange.map((year) => (
+													<option
+														value={year}
+														key={year}
+													>
+														{year}
+													</option>
+												))}
+										</select>
+									</div>
+
+									<div className="col-span-1">
+										<label className="block mb-2 text-md font-semibold dark:text-white">
+											Quantity
+										</label>
+										<input
+											type="text"
+											id="quantity"
+											className="w-full block bg-gray-50 dark:bg-slate-600 border border-gray-300 p-3 dark:border-gray-600 rounded-md text-sm dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+											value={quantity}
+											onChange={(e) =>
+												setQuantity(
+													Number(e.target.value)
+												)
+											}
+											required
+										/>
+									</div>
+
+									<button className="col-start-2 col-span-3 flex justify-center self-center bg-green-500 text-white font-semibold rounded-md px-6 py-2 mt-2 hover:bg-green-600 active:bg-green-400">
+										{coinId ? "Edit" : "Add"}
+									</button>
+
+									<AnimatePresence>
+										{success && (
+											<Message message="Coin added successfully" />
+										)}
+									</AnimatePresence>
+								</form>
 							)}
 						</AnimatePresence>
-					</form>
+					</div>
 				)}
 			</div>
 		</motion.div>
