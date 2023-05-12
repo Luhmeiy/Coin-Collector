@@ -89,7 +89,7 @@ router.put("/:userid/coin/:id", validate(coinSchema), async (req, res) => {
 
 	verifyIfCoinExists(`users/${userid}/coins`, req.body).then(
 		async (results) => {
-			if (results.length > 0) {
+			if (results.length > 1) {
 				const { id, quantity } = results[0];
 
 				await deleteData(`users/${userid}/coins`, req.params.id);

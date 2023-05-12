@@ -1,7 +1,7 @@
 import { useContext, useEffect, useState } from "react";
 import { ThemeContext } from "../../context";
 import { motion } from "framer-motion";
-import { PencilSimple, Trash } from "@phosphor-icons/react";
+import { CaretDown, CaretUp, PencilSimple, Trash } from "@phosphor-icons/react";
 import { useNavigate } from "react-router-dom";
 import { useDelete } from "../../hooks/useDelete";
 import { sortData } from "../../utils/sortData";
@@ -68,6 +68,47 @@ const Home = () => {
 		}
 	}
 
+	function handleUpdateQuantity(
+		id: string,
+		index: number,
+		action: "ADD" | "SUBTRACT"
+	) {
+		if (coins) {
+			switch (action) {
+				case "ADD":
+					setCoins((prevCoins) => {
+						const updatedCoins = (prevCoins ?? []).map((coin) =>
+							coin.id === id
+								? { ...coin, quantity: coin.quantity + 1 }
+								: coin
+						);
+
+						update(
+							`coins/${state.userUID}/coin/${id}`,
+							updatedCoins[index]
+						);
+						return updatedCoins;
+					});
+					break;
+				case "SUBTRACT":
+					setCoins((prevCoins) => {
+						const updatedCoins = (prevCoins ?? []).map((coin) =>
+							coin.id === id
+								? { ...coin, quantity: coin.quantity - 1 }
+								: coin
+						);
+
+						update(
+							`coins/${state.userUID}/coin/${id}`,
+							updatedCoins[index]
+						);
+						return updatedCoins;
+					});
+					break;
+			}
+		}
+	}
+
 	useEffect(() => {
 		if (state.user) {
 			if (state.user.coinSortSettings) {
@@ -93,9 +134,34 @@ const Home = () => {
 				{state.user && (
 					<>
 						<div className="min-h-[20%] flex items-center justify-between border-b-8 border-b-black p-5">
-							<h1 className="text-2xl font-bold mb-2">
-								Welcome, {state.user.displayName}
-							</h1>
+							<div>
+								<h1 className="text-2xl font-bold mb-2">
+									Welcome, {state.user.displayName}
+								</h1>
+
+								{coins && (
+									<>
+										<p className="text-lg">
+											Collected Coins:{" "}
+											<span className="font-semibold">
+												{coins.reduce(
+													(a, b) =>
+														a +
+														(b["quantity"] || 0),
+													0
+												)}
+											</span>
+										</p>
+
+										<p className="text-lg">
+											Unique Coins:{" "}
+											<span className="font-semibold">
+												{coins.length}
+											</span>
+										</p>
+									</>
+								)}
+							</div>
 
 							<div className="flex flex-col items-stretch gap-2">
 								<button
@@ -171,7 +237,7 @@ const Home = () => {
 								<div
 									className={`[&>*:nth-child(even)]:bg-${state.mode} [&>*:nth-child(even)]:backdrop-brightness-75`}
 								>
-									{coins.map((coin) => (
+									{coins.map((coin, i) => (
 										<div
 											key={coin.id}
 											className="grid grid-cols-5 items-center p-4"
@@ -181,7 +247,38 @@ const Home = () => {
 												{coin.symbol} {coin.value}
 											</p>
 											<p>{coin.year}</p>
-											<p>{coin.quantity}</p>
+
+											<div className="flex gap-6">
+												{coin.quantity}
+
+												<div>
+													<CaretUp
+														size={12}
+														weight="bold"
+														className="cursor-pointer"
+														onClick={() =>
+															handleUpdateQuantity(
+																coin.id,
+																i,
+																"ADD"
+															)
+														}
+													/>
+
+													<CaretDown
+														size={12}
+														weight="bold"
+														className="cursor-pointer"
+														onClick={() =>
+															handleUpdateQuantity(
+																coin.id,
+																i,
+																"SUBTRACT"
+															)
+														}
+													/>
+												</div>
+											</div>
 
 											<div className="flex flex-wrap gap-4">
 												<button
