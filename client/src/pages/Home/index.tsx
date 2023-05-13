@@ -11,6 +11,7 @@ import {
 } from "../../interfaces/SortingProps";
 import { useUpdate } from "../../hooks/useUpdate";
 import Arrow from "../../components/Arrow";
+import { ACTIONS } from "../../utils/reducer";
 
 interface CoinData {
 	id: string;
@@ -22,22 +23,22 @@ interface CoinData {
 }
 
 const Home = () => {
-	const { state } = useContext(ThemeContext);
+	const { state, dispatch } = useContext(ThemeContext);
 	const [coins, setCoins] = useState<CoinData[]>();
-	const [sortSettings, setSortSettings] = useState<SortSettingsProps>({
-		property: "name",
-		asc: true,
-	});
+	const [sortSettings, setSortSettings] = useState<SortSettingsProps>();
 
 	const deleteData = useDelete();
 	const update = useUpdate();
 	const navigate = useNavigate();
 
-	async function fetchCoins() {
+	async function fetchCoins(coinSortSettings: {
+		property: string;
+		asc: boolean;
+	}) {
 		await fetch(
 			`${state.serverURL}/coins/${state.userUID}?order=${
-				sortSettings?.property
-			}&direction=${sortSettings.asc ? "asc" : "desc"}`
+				coinSortSettings.property
+			}&direction=${coinSortSettings.asc ? "asc" : "desc"}`
 		)
 			.then((response) => {
 				return response.json();
@@ -50,11 +51,11 @@ const Home = () => {
 	async function handleDeleteCoin(coinId: string) {
 		await deleteData(`coins/${state.userUID}/coin/${coinId}`);
 
-		fetchCoins();
+		if (sortSettings) fetchCoins(sortSettings);
 	}
 
-	function handleSortData(property: PropertyProps) {
-		if (coins) {
+	async function handleSortData(property: PropertyProps) {
+		if (coins && sortSettings) {
 			const { newSort, sortedData } = sortData(
 				coins,
 				sortSettings,
@@ -64,7 +65,18 @@ const Home = () => {
 			setSortSettings(newSort);
 			setCoins(sortedData);
 
-			update(`users/${state.userUID}`, { coinSortSettings: newSort });
+			if (state.user) {
+				dispatch({
+					type: ACTIONS.ADD_USER,
+					payload: {
+						user: { ...state.user, coinSortSettings: newSort },
+					},
+				});
+			}
+
+			await update(`users/${state.userUID}`, {
+				coinSortSettings: newSort,
+			});
 		}
 	}
 
@@ -110,12 +122,10 @@ const Home = () => {
 	}
 
 	useEffect(() => {
-		if (state.user) {
-			if (state.user.coinSortSettings) {
-				setSortSettings(state.user.coinSortSettings);
-			}
+		if (state.user && state.user.coinSortSettings) {
+			setSortSettings(state.user.coinSortSettings);
 
-			fetchCoins();
+			fetchCoins(state.user.coinSortSettings);
 		}
 	}, [state.user]);
 
@@ -179,7 +189,7 @@ const Home = () => {
 							</div>
 						</div>
 
-						{coins && (
+						{coins && sortSettings && (
 							<div>
 								<div
 									className={`grid grid-cols-5 border-b-2 bg-${state.theme} border-black text-xl font-bold text-black p-5 select-none`}

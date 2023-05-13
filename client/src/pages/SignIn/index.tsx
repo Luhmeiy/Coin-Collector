@@ -57,8 +57,6 @@ const SignIn = () => {
 			email,
 			displayName,
 			photoURL,
-			theme: "green-theme",
-			mode: "light-mode",
 		};
 
 		const basePresets = await fetch(`${state.serverURL}/presets`).then(

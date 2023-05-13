@@ -12,24 +12,25 @@ import { sortData } from "../../utils/sortData";
 import { useUpdate } from "../../hooks/useUpdate";
 import Arrow from "../../components/Arrow";
 import { presetData } from "../../interfaces/PresetData";
+import { ACTIONS } from "../../utils/reducer";
 
 const Presets = () => {
-	const { state } = useContext(ThemeContext);
+	const { state, dispatch } = useContext(ThemeContext);
 	const [presets, setPresets] = useState<presetData[]>();
-	const [sortSettings, setSortSettings] = useState<SortSettingsProps>({
-		property: "initial_emission_date",
-		asc: true,
-	});
+	const [sortSettings, setSortSettings] = useState<SortSettingsProps>();
 
 	const deleteData = useDelete();
 	const update = useUpdate();
 	const navigate = useNavigate();
 
-	async function fetchPresets() {
+	async function fetchPresets(presetSortSettings: {
+		property: string;
+		asc: boolean;
+	}) {
 		await fetch(
 			`${state.serverURL}/presets/${state.userUID}?order=${
-				sortSettings?.property
-			}&direction=${sortSettings.asc ? "asc" : "desc"}`
+				presetSortSettings?.property
+			}&direction=${presetSortSettings.asc ? "asc" : "desc"}`
 		)
 			.then((response) => {
 				return response.json();
@@ -42,11 +43,11 @@ const Presets = () => {
 	async function handleDeletePreset(presetId: string) {
 		await deleteData(`presets/${state.userUID}/preset/${presetId}`);
 
-		fetchPresets();
+		if (sortSettings) fetchPresets(sortSettings);
 	}
 
-	function handleSortData(property: PropertyProps) {
-		if (presets) {
+	async function handleSortData(property: PropertyProps) {
+		if (presets && sortSettings) {
 			const { newSort, sortedData } = sortData(
 				presets,
 				sortSettings,
@@ -56,17 +57,26 @@ const Presets = () => {
 			setSortSettings(newSort);
 			setPresets(sortedData);
 
-			update(`users/${state.userUID}`, { presetSortSettings: newSort });
+			if (state.user) {
+				dispatch({
+					type: ACTIONS.ADD_USER,
+					payload: {
+						user: { ...state.user, presetSortSettings: newSort },
+					},
+				});
+			}
+
+			await update(`users/${state.userUID}`, {
+				presetSortSettings: newSort,
+			});
 		}
 	}
 
 	useEffect(() => {
-		if (state.user) {
-			if (state.user.presetSortSettings) {
-				setSortSettings(state.user.presetSortSettings);
-			}
+		if (state.user && state.user.presetSortSettings) {
+			setSortSettings(state.user.presetSortSettings);
 
-			fetchPresets();
+			fetchPresets(state.user.presetSortSettings);
 		}
 	}, [state.user]);
 
@@ -98,7 +108,7 @@ const Presets = () => {
 			>
 				{state.user && (
 					<>
-						{presets && (
+						{presets && sortSettings && (
 							<div>
 								<div
 									className={`grid grid-cols-6 items-center border-b-2 bg-${state.theme} border-black text-xl font-bold text-black p-5 select-none`}
