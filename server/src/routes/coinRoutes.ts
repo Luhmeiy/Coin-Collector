@@ -87,10 +87,16 @@ router.put("/:userid/coin/:id", validate(coinSchema), async (req, res) => {
 	const userid = req.params.userid;
 	const id = req.params.id;
 
-	verifyIfCoinExists(`users/${userid}/coins`, req.body).then(
-		async (results) => {
+	await updateData(`users/${userid}/coins`, id, req.body)
+		.then(
+			async () =>
+				await verifyIfCoinExists(`users/${userid}/coins`, req.body)
+		)
+		.then(async (results: any) => {
 			if (results.length > 1) {
-				const { id, quantity } = results[0];
+				const { id, quantity } = results.filter(
+					(result: any) => result.id !== req.params.id && result
+				)[0];
 
 				await deleteData(`users/${userid}/coins`, req.params.id);
 
@@ -100,14 +106,7 @@ router.put("/:userid/coin/:id", validate(coinSchema), async (req, res) => {
 
 				res.send(JSON.stringify(data));
 			} else {
-				const data = await updateData(
-					`users/${userid}/coins`,
-					id,
-					req.body
-				);
-
-				res.send(JSON.stringify(data));
+				res.send(JSON.stringify(results.data));
 			}
-		}
-	);
+		});
 });

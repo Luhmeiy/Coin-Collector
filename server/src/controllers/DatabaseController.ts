@@ -87,7 +87,7 @@ export const deleteData = async (path: string, id: string) => {
 export const updateData = async (path: string, id: string, data: {}) => {
 	const docRef = doc(db, path, id);
 
-	updateDoc(docRef, data)
+	await updateDoc(docRef, data)
 		.then(() => {
 			console.log("Document updated successfully");
 		})
