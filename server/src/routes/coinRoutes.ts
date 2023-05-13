@@ -87,6 +87,10 @@ router.put("/:userid/coin/:id", validate(coinSchema), async (req, res) => {
 	const userid = req.params.userid;
 	const id = req.params.id;
 
+	if (req.body.id) {
+		delete req.body.id;
+	}
+
 	await updateData(`users/${userid}/coins`, id, req.body)
 		.then(
 			async () =>

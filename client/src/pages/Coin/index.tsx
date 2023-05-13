@@ -117,7 +117,13 @@ const Coin = () => {
 
 		if (coinId) {
 			await update(`coins/${state.userUID}/coin/${coinId}`, data)
-				.then(() => navigate("/"))
+				.then(() => {
+					setSuccess(true);
+					setTimeout(() => {
+						setSuccess(false);
+						navigate("/");
+					}, 3000);
+				})
 				.catch((error) => console.log(error));
 		} else {
 			await post(`coins/${state.userUID}`, data)
@@ -258,13 +264,20 @@ const Coin = () => {
 										/>
 									</div>
 
-									<button className="col-start-2 col-span-3 flex justify-center self-center bg-green-500 text-white font-semibold rounded-md px-6 py-2 mt-2 hover:bg-green-600 active:bg-green-400">
+									<button
+										className="col-start-2 col-span-3 flex justify-center self-center bg-green-500 text-white font-semibold rounded-md px-6 py-2 mt-2 hover:bg-green-600 active:bg-green-400 disabled:bg-gray-400 disabled:cursor-not-allowed"
+										disabled={success}
+									>
 										{coinId ? "Edit" : "Add"}
 									</button>
 
 									<AnimatePresence>
 										{success && (
-											<Message message="Coin added successfully" />
+											<Message
+												message={`Coin ${
+													coinId ? "edited" : "added"
+												} successfully`}
+											/>
 										)}
 									</AnimatePresence>
 								</form>
@@ -391,7 +404,10 @@ const Coin = () => {
 										/>
 									</div>
 
-									<button className="col-start-2 col-span-3 flex justify-center self-center bg-green-500 text-white font-semibold rounded-md px-6 py-2 mt-2 hover:bg-green-600 active:bg-green-400">
+									<button
+										className="col-start-2 col-span-3 flex justify-center self-center bg-green-500 text-white font-semibold rounded-md px-6 py-2 mt-2 hover:bg-green-600 active:bg-green-400 disabled:bg-gray-400 disabled:cursor-not-allowed"
+										disabled={success}
+									>
 										{coinId ? "Edit" : "Add"}
 									</button>
 

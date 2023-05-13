@@ -59,7 +59,13 @@ const Preset = () => {
 
 		if (presetId) {
 			await update(`presets/${state.userUID}/preset/${presetId}`, data)
-				.then(() => navigate("/presets"))
+				.then(() => {
+					setSuccess(true);
+					setTimeout(() => {
+						setSuccess(false);
+						navigate("/presets");
+					}, 3000);
+				})
 				.catch((error) => console.log(error));
 		} else {
 			await post(`presets/${state.userUID}`, data)
@@ -185,13 +191,20 @@ const Preset = () => {
 							/>
 						</div>
 
-						<button className="col-start-2 col-span-3 flex justify-center self-center bg-green-500 text-white font-semibold rounded-md px-6 py-2 mt-2 hover:bg-green-600 active:bg-green-400">
+						<button
+							className="col-start-2 col-span-3 flex justify-center self-center bg-green-500 text-white font-semibold rounded-md px-6 py-2 mt-2 hover:bg-green-600 active:bg-green-400 disabled:bg-gray-400 disabled:cursor-not-allowed"
+							disabled={success}
+						>
 							{presetId ? "Edit" : "Add"}
 						</button>
 
 						<AnimatePresence>
 							{success && (
-								<Message message="Preset added successfully" />
+								<Message
+									message={`Preset ${
+										presetId ? "edited" : "added"
+									} successfully`}
+								/>
 							)}
 						</AnimatePresence>
 					</form>
