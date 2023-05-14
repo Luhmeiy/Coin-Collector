@@ -13,13 +13,17 @@ import { useUpdate } from "../../hooks/useUpdate";
 import Arrow from "../../components/Arrow";
 import { presetData } from "../../interfaces/PresetData";
 import { ACTIONS } from "../../utils/reducer";
+import { useGet } from "../../hooks/useGet";
 
 const Presets = () => {
 	const { state, dispatch } = useContext(ThemeContext);
 	const [presets, setPresets] = useState<presetData[]>();
 	const [sortSettings, setSortSettings] = useState<SortSettingsProps>();
 
+	const [error, setError] = useState<string>();
+
 	const deleteData = useDelete();
+	const getData = useGet();
 	const update = useUpdate();
 	const navigate = useNavigate();
 
@@ -27,21 +31,25 @@ const Presets = () => {
 		property: string;
 		asc: boolean;
 	}) {
-		await fetch(
-			`${state.serverURL}/presets/${state.userUID}?order=${
-				presetSortSettings?.property
-			}&direction=${presetSortSettings.asc ? "asc" : "desc"}`
-		)
-			.then((response) => {
-				return response.json();
-			})
-			.then((data) => {
-				setPresets(data);
-			});
+		try {
+			const data = await getData(
+				`presets/${state.userUID}?order=${
+					presetSortSettings?.property
+				}&direction=${presetSortSettings.asc ? "asc" : "desc"}`
+			);
+
+			setPresets(data);
+		} catch (error: any) {
+			setError(error.message);
+		}
 	}
 
 	async function handleDeletePreset(presetId: string) {
-		await deleteData(`presets/${state.userUID}/preset/${presetId}`);
+		try {
+			await deleteData(`presets/${state.userUID}/preset/${presetId}`);
+		} catch (error: any) {
+			alert(error.message);
+		}
 
 		if (sortSettings) fetchPresets(sortSettings);
 	}
@@ -66,9 +74,13 @@ const Presets = () => {
 				});
 			}
 
-			await update(`users/${state.userUID}`, {
-				presetSortSettings: newSort,
-			});
+			try {
+				await update(`users/${state.userUID}`, {
+					presetSortSettings: newSort,
+				});
+			} catch (error: any) {
+				alert(error.message);
+			}
 		}
 	}
 
@@ -108,6 +120,11 @@ const Presets = () => {
 			>
 				{state.user && (
 					<>
+						{error && (
+							<div className="h-full flex justify-center items-center text-lg font-semibold">
+								{error}
+							</div>
+						)}
 						{presets && sortSettings && (
 							<div>
 								<div

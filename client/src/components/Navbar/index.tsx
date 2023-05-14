@@ -8,22 +8,24 @@ import { useUpdate } from "../../hooks/useUpdate";
 
 const Navbar = () => {
 	const { state, dispatch } = useContext(ThemeContext);
-	const update = useUpdate();
 
+	const update = useUpdate();
 	const navigation = useNavigate();
 
-	function handleModeDispatch(typeValue: string) {
-		document.documentElement.className = "";
-		document.documentElement.classList.add(typeValue.split("-")[0]);
-		dispatch({ type: ACTIONS.CHANGE_MODE, payload: { mode: typeValue } });
+	async function handleDispatch(type: string, value: string) {
+		if (type === "mode") {
+			document.documentElement.className = "";
+			document.documentElement.classList.add(value.split("-")[0]);
+			dispatch({ type: ACTIONS.CHANGE_MODE, payload: { mode: value } });
+		} else if (type === "theme") {
+			dispatch({ type: ACTIONS.CHANGE_THEME, payload: { theme: value } });
+		}
 
-		update(`users/${state.userUID}`, { mode: typeValue });
-	}
-
-	function handleThemeDispatch(typeValue: string) {
-		dispatch({ type: ACTIONS.CHANGE_THEME, payload: { theme: typeValue } });
-
-		update(`users/${state.userUID}`, { theme: typeValue });
+		try {
+			await update(`users/${state.userUID}`, { [type]: value });
+		} catch (error: any) {
+			alert(error.message);
+		}
 	}
 
 	function handleSignOut() {
@@ -58,7 +60,7 @@ const Navbar = () => {
 							<DropdownMenu.Content className="grid grid-cols-2 gap-2 bg-black text-white font-semibold p-2 rounded-sm shadow-[0px_10px_38px_-10px_rgba(22,_23,_24,_0.35),_0px_10px_20px_-15px_rgba(22,_23,_24,_0.2)]">
 								<button
 									onClick={() =>
-										handleModeDispatch("light-mode")
+										handleDispatch("mode", "light-mode")
 									}
 								>
 									Light
@@ -66,7 +68,7 @@ const Navbar = () => {
 
 								<button
 									onClick={() =>
-										handleModeDispatch("dark-mode")
+										handleDispatch("mode", "dark-mode")
 									}
 								>
 									Dark
@@ -87,37 +89,37 @@ const Navbar = () => {
 								<button
 									className="w-4 h-4 bg-green-theme"
 									onClick={() =>
-										handleThemeDispatch("green-theme")
+										handleDispatch("theme", "green-theme")
 									}
 								/>
 								<button
 									className="w-4 h-4 bg-blue-theme"
 									onClick={() =>
-										handleThemeDispatch("blue-theme")
+										handleDispatch("theme", "blue-theme")
 									}
 								/>
 								<button
 									className="w-4 h-4 bg-red-theme"
 									onClick={() =>
-										handleThemeDispatch("red-theme")
+										handleDispatch("theme", "red-theme")
 									}
 								/>
 								<button
 									className="w-4 h-4 bg-yellow-theme"
 									onClick={() =>
-										handleThemeDispatch("yellow-theme")
+										handleDispatch("theme", "yellow-theme")
 									}
 								/>
 								<button
 									className="w-4 h-4 bg-pink-theme"
 									onClick={() =>
-										handleThemeDispatch("pink-theme")
+										handleDispatch("theme", "pink-theme")
 									}
 								/>
 								<button
 									className="w-4 h-4 bg-purple-theme"
 									onClick={() =>
-										handleThemeDispatch("purple-theme")
+										handleDispatch("theme", "purple-theme")
 									}
 								/>
 

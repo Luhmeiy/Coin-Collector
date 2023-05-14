@@ -5,13 +5,17 @@ export const useUpdate = () => {
 	const { state } = useContext(ThemeContext);
 
 	const updateData = async (url: string, data: object) => {
-		await fetch(`${state.serverURL}/${url}`, {
+		const response = await fetch(`${state.serverURL}/${url}`, {
 			method: "PUT",
 			headers: {
 				"Content-type": "application/json",
 			},
 			body: JSON.stringify(data),
 		});
+
+		if (!response.ok) {
+			throw new Error("Failed to update data.");
+		}
 	};
 
 	return updateData;

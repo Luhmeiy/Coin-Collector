@@ -14,13 +14,13 @@ import {
 	where,
 } from "firebase/firestore";
 
-interface userData {
+interface UserData {
 	email: string;
 	displayName: string;
 	photoURL: string;
 }
 
-interface coinData {
+interface CoinData {
 	name: string;
 	symbol: string;
 	value: number;
@@ -30,76 +30,79 @@ interface coinData {
 
 export const getData = async (
 	path: string,
-	order?: string,
-	direction?: "asc" | "desc",
+	order: string,
+	direction: "asc" | "desc",
 	id?: string
 ) => {
 	let data: DocumentData[] = [];
 
-	if (id) {
-		const docRef = doc(db, path, id);
-		const docSnap = await getDoc(docRef);
+	try {
+		if (id) {
+			const docRef = doc(db, path, id);
+			const docSnap = await getDoc(docRef);
 
-		const document = docSnap.data();
+			const document = docSnap.data();
 
-		if (document) {
-			data.push(document);
+			if (document) data.push(document);
+		} else {
+			const dbRef = collection(db, path);
+			const q = query(dbRef, orderBy(order, direction));
+			const docsSnap = await getDocs(q);
+
+			docsSnap.forEach((doc) => {
+				data.push({ ...doc.data(), id: doc.id });
+			});
 		}
-	} else {
-		const dbRef = collection(db, path);
-		const q = query(dbRef, orderBy(order!, direction!));
-		const docsSnap = await getDocs(q);
 
-		docsSnap.forEach((doc) => {
-			data.push({ ...doc.data(), id: doc.id });
-		});
+		if (data.length > 0) return data;
+
+		throw new Error("Failed to fetch data.");
+	} catch (error) {
+		throw new Error(error.message);
 	}
-
-	return data;
 };
 
-export const postData = async (path: string, data: {}) => {
+export const postData = async (path: string, data: object) => {
 	const dbRef = collection(db, path);
 
-	addDoc(dbRef, data)
-		.then((docRef) => {
-			return docRef;
-		})
-		.catch((error) => {
-			return error;
-		});
+	try {
+		await addDoc(dbRef, data);
+		console.log("Document posted successfully");
+	} catch (error) {
+		throw new Error(error.message);
+	}
+};
+
+export const updateData = async (path: string, id: string, data: object) => {
+	const docRef = doc(db, path, id);
+
+	try {
+		await updateDoc(docRef, data);
+		console.log("Document updated successfully");
+	} catch (error) {
+		throw new Error(error.message);
+	}
 };
 
 export const deleteData = async (path: string, id: string) => {
 	const docRef = doc(db, path, id);
 
-	deleteDoc(docRef)
-		.then(() => {
-			console.log("Document deleted successfully");
-		})
-		.catch((error) => {
-			console.log(error);
-		});
-};
+	const docSnapshot = await getDoc(docRef);
 
-export const updateData = async (path: string, id: string, data: {}) => {
-	const docRef = doc(db, path, id);
-
-	await updateDoc(docRef, data)
-		.then(() => {
-			console.log("Document updated successfully");
-		})
-		.catch((error) => {
-			console.log(error);
-		});
+	if (docSnapshot.exists()) {
+		await deleteDoc(docRef);
+		console.log("Document deleted successfully");
+	} else {
+		throw new Error("Document does not exist");
+	}
 };
 
 export const registerUser = async (
 	path: string,
-	data: userData,
-	uid: string
+	uid: string,
+	data: UserData
 ) => {
-	const dbRef = doc(db, path, uid);
+	const docRef = doc(db, path, uid);
 
 	const { email, displayName, photoURL } = data;
 
@@ -118,16 +121,15 @@ export const registerUser = async (
 		presetSortSettings: defaultOrder,
 	};
 
-	setDoc(dbRef, userData)
-		.then((docRef) => {
-			return docRef;
-		})
-		.catch((error) => {
-			return error;
-		});
+	try {
+		await setDoc(docRef, userData);
+		console.log("User registered successfully");
+	} catch (error) {
+		throw new Error(error.message);
+	}
 };
 
-export const verifyIfCoinExists = async (path: string, data: coinData) => {
+export const verifyIfCoinExists = async (path: string, data: CoinData) => {
 	const results: DocumentData = [];
 
 	const dbRef = collection(db, path);
@@ -138,11 +140,16 @@ export const verifyIfCoinExists = async (path: string, data: coinData) => {
 		where("value", "==", data.value),
 		where("year", "==", data.year)
 	);
-	const docsSnap = await getDocs(q);
 
-	docsSnap.forEach((doc) => {
-		results.push({ id: doc.id, ...doc.data() });
-	});
+	try {
+		const docsSnap = await getDocs(q);
 
-	return results;
+		docsSnap.forEach((doc) => {
+			results.push({ id: doc.id, ...doc.data() });
+		});
+
+		return results;
+	} catch (error) {
+		throw new Error(error.message);
+	}
 };

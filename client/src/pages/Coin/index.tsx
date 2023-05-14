@@ -7,16 +7,19 @@ import { useUpdate } from "../../hooks/useUpdate";
 import { usePost } from "../../hooks/usePost";
 import { Message } from "../../components";
 import { presetData } from "../../interfaces/PresetData";
+import { useGet } from "../../hooks/useGet";
 
 const Coin = () => {
 	const { coinId } = useParams();
 	const { state } = useContext(ThemeContext);
 
-	const update = useUpdate();
+	const getData = useGet();
 	const post = usePost();
+	const update = useUpdate();
 
 	const [loading, setLoading] = useState<boolean>(true);
 	const [success, setSuccess] = useState<boolean>(false);
+	const [error, setError] = useState<string>();
 
 	const [presetUse, setPresetUse] = useState<boolean>(false);
 	const [presets, setPresets] = useState<presetData[]>();
@@ -33,32 +36,34 @@ const Coin = () => {
 	const navigate = useNavigate();
 
 	async function fetchCoin() {
-		await fetch(`${state.serverURL}/coins/${state.userUID}/coin/${coinId}`)
-			.then((response) => {
-				return response.json();
-			})
-			.then((data) => {
-				setName(data[0].name);
-				setSymbol(data[0].symbol);
-				setValue(data[0].value);
-				setYear(data[0].year);
-				setQuantity(data[0].quantity);
+		try {
+			const data = await getData(`coins/${state.userUID}/coin/${coinId}`);
 
-				setLoading(false);
-			});
+			setName(data[0].name);
+			setSymbol(data[0].symbol);
+			setValue(data[0].value);
+			setYear(data[0].year);
+			setQuantity(data[0].quantity);
+
+			setLoading(false);
+		} catch (error: any) {
+			setError(error.message);
+			setTimeout(() => setError(""), 3000);
+		}
 	}
 
 	async function fetchPresets() {
-		await fetch(`${state.serverURL}/presets/${state.userUID}`)
-			.then((response) => {
-				return response.json();
-			})
-			.then((data) => {
-				setPresets(data);
-				handleSelectedPreset(0);
+		try {
+			const data = await getData(`presets/${state.userUID}`);
 
-				setLoading(false);
-			});
+			setPresets(data);
+			handleSelectedPreset(0);
+
+			setLoading(false);
+		} catch (error: any) {
+			setError(error.message);
+			setTimeout(() => setError(""), 3000);
+		}
 	}
 
 	function handlePresetUse() {
@@ -115,23 +120,24 @@ const Coin = () => {
 			quantity,
 		};
 
-		if (coinId) {
-			await update(`coins/${state.userUID}/coin/${coinId}`, data)
-				.then(() => {
-					setSuccess(true);
-					setTimeout(() => {
-						setSuccess(false);
-						navigate("/");
-					}, 3000);
-				})
-				.catch((error) => console.log(error));
-		} else {
-			await post(`coins/${state.userUID}`, data)
-				.then(() => {
-					setSuccess(true);
-					setTimeout(() => setSuccess(false), 3000);
-				})
-				.catch((error) => console.log(error));
+		try {
+			if (coinId) {
+				await update(`coins/${state.userUID}/coin/${coinId}`, data);
+
+				setSuccess(true);
+				setTimeout(() => {
+					setSuccess(false);
+					navigate("/");
+				}, 3000);
+			} else {
+				await post(`coins/${state.userUID}`, data);
+
+				setSuccess(true);
+				setTimeout(() => setSuccess(false), 3000);
+			}
+		} catch (error: any) {
+			setError(error.message);
+			setTimeout(() => setError(""), 3000);
 		}
 	}
 
@@ -168,12 +174,14 @@ const Coin = () => {
 
 				{!loading && (
 					<div className="flex flex-col items-center">
-						<button
-							className={`bg-${state.theme} text-black rounded-md px-6 py-2 hover:brightness-90 active:brightness-110`}
-							onClick={handlePresetUse}
-						>
-							{!presetUse ? "Use Preset" : "Cancel"}
-						</button>
+						{!coinId && (
+							<button
+								className={`bg-${state.theme} text-black rounded-md px-6 py-2 hover:brightness-90 active:brightness-110`}
+								onClick={handlePresetUse}
+							>
+								{!presetUse ? "Use Preset" : "Cancel"}
+							</button>
+						)}
 
 						<AnimatePresence>
 							{!presetUse ? (
@@ -270,16 +278,6 @@ const Coin = () => {
 									>
 										{coinId ? "Edit" : "Add"}
 									</button>
-
-									<AnimatePresence>
-										{success && (
-											<Message
-												message={`Coin ${
-													coinId ? "edited" : "added"
-												} successfully`}
-											/>
-										)}
-									</AnimatePresence>
 								</form>
 							) : (
 								<form
@@ -408,16 +406,20 @@ const Coin = () => {
 										className="col-start-2 col-span-3 flex justify-center self-center bg-green-500 text-white font-semibold rounded-md px-6 py-2 mt-2 hover:bg-green-600 active:bg-green-400 disabled:bg-gray-400 disabled:cursor-not-allowed"
 										disabled={success}
 									>
-										{coinId ? "Edit" : "Add"}
+										Add
 									</button>
-
-									<AnimatePresence>
-										{success && (
-											<Message message="Coin added successfully" />
-										)}
-									</AnimatePresence>
 								</form>
 							)}
+						</AnimatePresence>
+
+						<AnimatePresence>
+							{success && (
+								<Message
+									message="Coin added successfully"
+									type="success"
+								/>
+							)}
+							{error && <Message message={error} type="error" />}
 						</AnimatePresence>
 					</div>
 				)}

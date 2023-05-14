@@ -6,16 +6,19 @@ import { X } from "@phosphor-icons/react";
 import { useUpdate } from "../../hooks/useUpdate";
 import { usePost } from "../../hooks/usePost";
 import { Message } from "../../components";
+import { useGet } from "../../hooks/useGet";
 
 const Preset = () => {
 	const { presetId } = useParams();
 	const { state } = useContext(ThemeContext);
 
-	const update = useUpdate();
+	const getData = useGet();
 	const post = usePost();
+	const update = useUpdate();
 
 	const [loading, setLoading] = useState<boolean>(true);
 	const [success, setSuccess] = useState<boolean>(false);
+	const [error, setError] = useState<string>();
 
 	const [name, setName] = useState<string>();
 	const [symbol, setSymbol] = useState<string>();
@@ -26,21 +29,22 @@ const Preset = () => {
 	const navigate = useNavigate();
 
 	async function fetchPreset() {
-		await fetch(
-			`${state.serverURL}/presets/${state.userUID}/preset/${presetId}`
-		)
-			.then((response) => {
-				return response.json();
-			})
-			.then((data) => {
-				setName(data[0].name);
-				setSymbol(data[0].symbol);
-				setInitialDate(data[0].initial_emission_date);
-				setFinalDate(data[0].final_emission_date);
-				setValueRange(data[0].value_range);
+		try {
+			const data = await getData(
+				`presets/${state.userUID}/preset/${presetId}`
+			);
 
-				setLoading(false);
-			});
+			setName(data[0].name);
+			setSymbol(data[0].symbol);
+			setInitialDate(data[0].initial_emission_date);
+			setFinalDate(data[0].final_emission_date);
+			setValueRange(data[0].value_range);
+
+			setLoading(false);
+		} catch (error: any) {
+			setError(error.message);
+			setTimeout(() => setError(""), 3000);
+		}
 	}
 
 	async function handleSubmit(e: FormEvent) {
@@ -57,23 +61,27 @@ const Preset = () => {
 					: valueRange?.split(",").map(Number),
 		};
 
-		if (presetId) {
-			await update(`presets/${state.userUID}/preset/${presetId}`, data)
-				.then(() => {
-					setSuccess(true);
-					setTimeout(() => {
-						setSuccess(false);
-						navigate("/presets");
-					}, 3000);
-				})
-				.catch((error) => console.log(error));
-		} else {
-			await post(`presets/${state.userUID}`, data)
-				.then(() => {
-					setSuccess(true);
-					setTimeout(() => setSuccess(false), 3000);
-				})
-				.catch((error) => console.log(error));
+		try {
+			if (presetId) {
+				await update(
+					`presets/${state.userUID}/preset/${presetId}`,
+					data
+				);
+
+				setSuccess(true);
+				setTimeout(() => {
+					setSuccess(false);
+					navigate("/presets");
+				}, 3000);
+			} else {
+				await post(`presets/${state.userUID}`, data);
+
+				setSuccess(true);
+				setTimeout(() => setSuccess(false), 3000);
+			}
+		} catch (error: any) {
+			setError(error.message);
+			setTimeout(() => setError(""), 3000);
 		}
 	}
 
@@ -204,8 +212,10 @@ const Preset = () => {
 									message={`Preset ${
 										presetId ? "edited" : "added"
 									} successfully`}
+									type="success"
 								/>
 							)}
+							{error && <Message message={error} type="error" />}
 						</AnimatePresence>
 					</form>
 				)}

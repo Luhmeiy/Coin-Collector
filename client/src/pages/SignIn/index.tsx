@@ -7,10 +7,12 @@ import { ThemeContext } from "../../context";
 import { ACTIONS } from "../../utils/reducer";
 import { motion } from "framer-motion";
 import { usePost } from "../../hooks/usePost";
+import { useGet } from "../../hooks/useGet";
 
 const SignIn = () => {
 	const { state, dispatch } = useContext(ThemeContext);
 
+	const getData = useGet();
 	const post = usePost();
 	const navigate = useNavigate();
 
@@ -29,17 +31,13 @@ const SignIn = () => {
 	async function searchUsers(userData: User) {
 		const { uid } = userData;
 
-		await fetch(`${state.serverURL}/users/${uid}`)
-			.then((response) => {
-				return response.json();
-			})
-			.then((data) => {
-				if (data.length > 0) {
-					login(uid);
-				} else {
-					registerUser(userData);
-				}
-			});
+		try {
+			await getData(`users/${uid}`);
+
+			login(uid);
+		} catch (error: any) {
+			registerUser(userData);
+		}
 	}
 
 	async function login(uid: string) {
@@ -59,17 +57,19 @@ const SignIn = () => {
 			photoURL,
 		};
 
-		const basePresets = await fetch(`${state.serverURL}/presets`).then(
-			(response) => response.json()
-		);
+		try {
+			const basePresets = await getData(`presets`);
 
-		await post("users", data)
-			.then(async () => {
-				for (const basePreset of basePresets) {
-					await post(`presets/${uid}`, basePreset);
-				}
-			})
-			.finally(() => login(uid));
+			await post("users", data);
+
+			for (const basePreset of basePresets) {
+				await post(`presets/${uid}`, basePreset);
+			}
+
+			login(uid);
+		} catch (error: any) {
+			alert(error.message);
+		}
 	}
 
 	return (

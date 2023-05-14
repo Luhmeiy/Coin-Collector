@@ -12,6 +12,7 @@ import {
 import { useUpdate } from "../../hooks/useUpdate";
 import Arrow from "../../components/Arrow";
 import { ACTIONS } from "../../utils/reducer";
+import { useGet } from "../../hooks/useGet";
 
 interface CoinData {
 	id: string;
@@ -27,7 +28,10 @@ const Home = () => {
 	const [coins, setCoins] = useState<CoinData[]>();
 	const [sortSettings, setSortSettings] = useState<SortSettingsProps>();
 
+	const [error, setError] = useState<string>();
+
 	const deleteData = useDelete();
+	const getData = useGet();
 	const update = useUpdate();
 	const navigate = useNavigate();
 
@@ -35,21 +39,25 @@ const Home = () => {
 		property: string;
 		asc: boolean;
 	}) {
-		await fetch(
-			`${state.serverURL}/coins/${state.userUID}?order=${
-				coinSortSettings.property
-			}&direction=${coinSortSettings.asc ? "asc" : "desc"}`
-		)
-			.then((response) => {
-				return response.json();
-			})
-			.then((data) => {
-				setCoins(data);
-			});
+		try {
+			const data = await getData(
+				`coins/${state.userUID}?order=${
+					coinSortSettings.property
+				}&direction=${coinSortSettings.asc ? "asc" : "desc"}`
+			);
+
+			setCoins(data);
+		} catch (error: any) {
+			setError(error.message);
+		}
 	}
 
 	async function handleDeleteCoin(coinId: string) {
-		await deleteData(`coins/${state.userUID}/coin/${coinId}`);
+		try {
+			await deleteData(`coins/${state.userUID}/coin/${coinId}`);
+		} catch (error: any) {
+			alert(error.message);
+		}
 
 		if (sortSettings) fetchCoins(sortSettings);
 	}
@@ -74,50 +82,41 @@ const Home = () => {
 				});
 			}
 
-			await update(`users/${state.userUID}`, {
-				coinSortSettings: newSort,
-			});
+			try {
+				await update(`users/${state.userUID}`, {
+					coinSortSettings: newSort,
+				});
+			} catch (error: any) {
+				alert(error.message);
+			}
 		}
 	}
 
-	function handleUpdateQuantity(
+	async function handleUpdateQuantity(
 		id: string,
 		index: number,
 		action: "ADD" | "SUBTRACT"
 	) {
-		if (coins) {
-			switch (action) {
-				case "ADD":
-					setCoins((prevCoins) => {
-						const updatedCoins = (prevCoins ?? []).map((coin) =>
-							coin.id === id
-								? { ...coin, quantity: coin.quantity + 1 }
-								: coin
-						);
+		if (!coins) return;
 
-						update(
-							`coins/${state.userUID}/coin/${id}`,
-							updatedCoins[index]
-						);
-						return updatedCoins;
-					});
-					break;
-				case "SUBTRACT":
-					setCoins((prevCoins) => {
-						const updatedCoins = (prevCoins ?? []).map((coin) =>
-							coin.id === id
-								? { ...coin, quantity: coin.quantity - 1 }
-								: coin
-						);
-
-						update(
-							`coins/${state.userUID}/coin/${id}`,
-							updatedCoins[index]
-						);
-						return updatedCoins;
-					});
-					break;
+		const updatedCoins = (coins ?? []).map((coin) => {
+			if (coin.id === id) {
+				const updatedQuantity =
+					action === "ADD" ? coin.quantity + 1 : coin.quantity - 1;
+				return { ...coin, quantity: updatedQuantity };
 			}
+			return coin;
+		});
+
+		setCoins(updatedCoins);
+
+		try {
+			await update(
+				`coins/${state.userUID}/coin/${id}`,
+				updatedCoins[index]
+			);
+		} catch (error: any) {
+			alert(error.message);
 		}
 	}
 
@@ -188,6 +187,12 @@ const Home = () => {
 								</button>
 							</div>
 						</div>
+
+						{error && (
+							<div className="h-full flex justify-center items-center text-lg font-semibold">
+								{error}
+							</div>
+						)}
 
 						{coins && sortSettings && (
 							<div>

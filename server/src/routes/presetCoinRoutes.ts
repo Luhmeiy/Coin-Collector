@@ -7,86 +7,88 @@ import {
 } from "../controllers/DatabaseController";
 import { validate } from "../middlewares/validate";
 import { presetSchema } from "../schemas/Preset";
+import { DirectionTypeProps } from "DirectionTypeProps";
 
 export const router = express.Router();
 
-type DirectionTypeProps = "asc" | "desc";
-
 router.get("/", async (req, res) => {
-	const orderType = req.query.order || "name";
+	const orderType = (req.query.order as string) || "name";
+	const directionType = (req.query.direction as DirectionTypeProps) || "asc";
 
-	const data = await getData("preset_coins", String(orderType));
-
-	res.send(JSON.stringify(data));
+	try {
+		const data = await getData("preset_coins", orderType, directionType);
+		res.send(JSON.stringify(data));
+	} catch (error) {
+		res.status(500).send(JSON.stringify({ error: error.message }));
+	}
 });
 
 router.get("/:userid", async (req, res) => {
 	const userid = req.params.userid;
-	const directionType: DirectionTypeProps =
-		(req.query.direction as DirectionTypeProps) || "asc";
-	const orderType = req.query.order || "name";
+	const orderType = (req.query.order as string) || "name";
+	const directionType = (req.query.direction as DirectionTypeProps) || "asc";
 
-	const data = await getData(
-		`users/${userid}/presets`,
-		String(orderType),
-		directionType
-	);
-
-	res.send(JSON.stringify(data));
+	try {
+		const data = await getData(
+			`users/${userid}/presets`,
+			orderType,
+			directionType
+		);
+		res.send(JSON.stringify(data));
+	} catch (error) {
+		res.status(500).send(JSON.stringify({ error: error.message }));
+	}
 });
 
 router.post("/:userid", validate(presetSchema), async (req, res) => {
 	const userid = req.params.userid;
+	const presetData = req.body;
 
-	const {
-		final_emission_date,
-		initial_emission_date,
-		name,
-		symbol,
-		value_range,
-	} = req.body;
-
-	const presetData = {
-		final_emission_date,
-		initial_emission_date,
-		name,
-		symbol,
-		value_range,
-	};
-
-	const data = await postData(`users/${userid}/presets`, presetData);
-
-	res.send(JSON.stringify(data));
+	try {
+		const data = await postData(`users/${userid}/presets`, presetData);
+		res.send(JSON.stringify(data));
+	} catch (error) {
+		res.status(500).send(JSON.stringify({ error: error.message }));
+	}
 });
 
 router.get("/:userid/preset/:id", async (req, res) => {
 	const userid = req.params.userid;
 	const id = req.params.id;
 
-	const data = await getData(
-		`users/${userid}/presets`,
-		undefined,
-		undefined,
-		id
-	);
-
-	res.send(JSON.stringify(data));
-});
-
-router.delete("/:userid/preset/:id", async (req, res) => {
-	const userid = req.params.userid;
-	const id = req.params.id;
-
-	const data = await deleteData(`users/${userid}/presets`, id);
-
-	res.send(JSON.stringify(data));
+	try {
+		const data = await getData(
+			`users/${userid}/presets`,
+			undefined,
+			undefined,
+			id
+		);
+		res.send(JSON.stringify(data));
+	} catch (error) {
+		res.status(500).send(JSON.stringify({ error: error.message }));
+	}
 });
 
 router.put("/:userid/preset/:id", validate(presetSchema), async (req, res) => {
 	const userid = req.params.userid;
 	const id = req.params.id;
 
-	const data = await updateData(`users/${userid}/presets`, id, req.body);
+	try {
+		const data = await updateData(`users/${userid}/presets`, id, req.body);
+		res.send(JSON.stringify(data));
+	} catch (error) {
+		res.status(500).send(JSON.stringify({ error: error.message }));
+	}
+});
 
-	res.send(JSON.stringify(data));
+router.delete("/:userid/preset/:id", async (req, res) => {
+	const userid = req.params.userid;
+	const id = req.params.id;
+
+	try {
+		const data = await deleteData(`users/${userid}/presets`, id);
+		res.send(JSON.stringify(data));
+	} catch (error) {
+		res.status(500).send(JSON.stringify({ error: error.message }));
+	}
 });

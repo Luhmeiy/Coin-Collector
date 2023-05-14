@@ -16,6 +16,7 @@ import {
 import resolveConfig from "tailwindcss/resolveConfig";
 import tailwindConfig from "../../tailwind.config";
 import { useNavigate } from "react-router-dom";
+import { useGet } from "../hooks/useGet";
 
 interface themeContextData {
 	state: stateData;
@@ -45,6 +46,7 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
 		initialState
 	);
 
+	const getData = useGet();
 	const navigate = useNavigate();
 
 	const fullConfig: fullConfigData = resolveConfig(tailwindConfig);
@@ -62,35 +64,30 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
 	useEffect(() => {
 		if (state.userUID) {
 			const searchUsers = async (uid: string) => {
-				await fetch(`${state.serverURL}/users/${uid}`)
-					.then((response) => {
-						return response.json();
-					})
-					.then((data: userData[]) => {
-						if (data.length > 0) {
-							dispatch({
-								type: ACTIONS.ADD_USER,
-								payload: { user: data[0] },
-							});
+				try {
+					const data = (await getData(`users/${uid}`)) as userData[];
 
-							dispatch({
-								type: ACTIONS.CHANGE_MODE,
-								payload: { mode: data[0].mode },
-							});
+					dispatch({
+						type: ACTIONS.ADD_USER,
+						payload: { user: data[0] },
+					});
 
-							dispatch({
-								type: ACTIONS.CHANGE_THEME,
-								payload: { theme: data[0].theme },
-							});
+					dispatch({
+						type: ACTIONS.CHANGE_MODE,
+						payload: { mode: data[0].mode },
+					});
 
-							document.documentElement.classList.add(
-								data[0].mode.split("-")[0]
-							);
-						} else {
-							navigate("/register");
-						}
-					})
-					.catch(() => navigate("/register"));
+					dispatch({
+						type: ACTIONS.CHANGE_THEME,
+						payload: { theme: data[0].theme },
+					});
+
+					document.documentElement.classList.add(
+						data[0].mode.split("-")[0]
+					);
+				} catch (error) {
+					navigate("/register");
+				}
 			};
 
 			searchUsers(state.userUID);
