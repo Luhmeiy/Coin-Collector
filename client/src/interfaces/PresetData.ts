@@ -1,4 +1,4 @@
-export interface presetData {
+export interface PresetData {
 	id: string;
 	final_emission_date: number;
 	initial_emission_date: number;

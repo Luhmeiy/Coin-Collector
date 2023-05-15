@@ -1,7 +1,7 @@
 import { useContext } from "react";
 import { ThemeContext } from "../context";
 
-export const useGet = () => {
+const useGet = () => {
 	const { state } = useContext(ThemeContext);
 
 	const getData = async (url: string) => {
@@ -16,3 +16,5 @@ export const useGet = () => {
 
 	return getData;
 };
+
+export default useGet;

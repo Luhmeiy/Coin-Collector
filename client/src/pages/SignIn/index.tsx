@@ -1,13 +1,21 @@
-import { GoogleLogo } from "@phosphor-icons/react";
+// Context
+import { ThemeContext } from "../../context";
+
+// Firebase
 import { GoogleAuthProvider, signInWithPopup, User } from "firebase/auth";
 import { auth } from "../../services/firebase";
-import { useNavigate } from "react-router-dom";
-import { useContext } from "react";
-import { ThemeContext } from "../../context";
-import { ACTIONS } from "../../utils/reducer";
+
+// Hooks
+import { useGet, usePost } from "../../hooks";
+
+// Libraries
 import { motion } from "framer-motion";
-import { usePost } from "../../hooks/usePost";
-import { useGet } from "../../hooks/useGet";
+import { GoogleLogo } from "@phosphor-icons/react";
+
+// React
+import { useContext } from "react";
+import { useNavigate } from "react-router-dom";
+import { ACTIONS } from "../../utils/reducer";
 
 const SignIn = () => {
 	const { state, dispatch } = useContext(ThemeContext);
@@ -16,16 +24,16 @@ const SignIn = () => {
 	const post = usePost();
 	const navigate = useNavigate();
 
-	function handleGoogleSignIn() {
+	async function handleGoogleSignIn() {
 		const provider = new GoogleAuthProvider();
 
-		signInWithPopup(auth, provider)
-			.then((res) => {
-				searchUsers(res.user);
-			})
-			.catch((error) => {
-				console.log(error);
-			});
+		try {
+			const results = await signInWithPopup(auth, provider);
+
+			searchUsers(results.user);
+		} catch (error: any) {
+			alert(error);
+		}
 	}
 
 	async function searchUsers(userData: User) {
@@ -74,7 +82,7 @@ const SignIn = () => {
 
 	return (
 		<motion.div
-			className="w-[85%] h-[85%] flex flex-col justify-center items-center border-8 border-black rounded-2xl p-5 bg-light-mode dark:bg-dark-mode dark:text-white shadow-solid"
+			className="w-[85%] h-[85%] flex flex-col justify-center items-center bg-light-mode dark:bg-dark-mode dark:text-white border-8 border-black rounded-2xl p-5 shadow-solid"
 			initial={{ translateY: window.innerHeight }}
 			animate={{ translateY: 0 }}
 			exit={{ translateY: window.innerHeight }}
@@ -87,7 +95,7 @@ const SignIn = () => {
 			<p className="text-lg mb-12">Sign in to catalog your coins!</p>
 
 			<button
-				className={`flex items-center bg-${state.theme} border-4 border-black rounded text-black py-2 px-6 font-semibold transition-all duration-500 hover:brightness-90`}
+				className={`flex items-center bg-${state.theme} text-black font-semibold border-4 border-black rounded py-2 px-6 transition-all duration-500 hover:brightness-90`}
 				onClick={handleGoogleSignIn}
 			>
 				<GoogleLogo

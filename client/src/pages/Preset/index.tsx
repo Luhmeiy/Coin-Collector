@@ -1,12 +1,19 @@
-import { useNavigate, useParams } from "react-router-dom";
-import { AnimatePresence, motion } from "framer-motion";
-import { FormEvent, useContext, useEffect, useState } from "react";
-import { ThemeContext } from "../../context";
-import { X } from "@phosphor-icons/react";
-import { useUpdate } from "../../hooks/useUpdate";
-import { usePost } from "../../hooks/usePost";
+// Components
 import { Message } from "../../components";
-import { useGet } from "../../hooks/useGet";
+
+// Context
+import { ThemeContext } from "../../context";
+
+// Hooks
+import { useGet, usePost, useUpdate } from "../../hooks";
+
+// Libraries
+import { AnimatePresence, motion } from "framer-motion";
+import { X } from "@phosphor-icons/react";
+
+// React
+import { FormEvent, useContext, useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 
 const Preset = () => {
 	const { presetId } = useParams();
@@ -95,7 +102,7 @@ const Preset = () => {
 
 	return (
 		<motion.div
-			className={`w-[85%] h-[85%] flex flex-col items-center justify-center relative border-8 border-black rounded-2xl bg-light-mode dark:bg-dark-mode dark:text-white shadow-solid`}
+			className={`w-[85%] h-[85%] relative flex flex-col justify-center items-center bg-light-mode dark:bg-dark-mode dark:text-white border-8 border-black rounded-2xl shadow-solid`}
 			initial={{ scale: 0 }}
 			animate={{ scale: 1 }}
 			exit={{ scale: 0 }}
@@ -124,13 +131,13 @@ const Preset = () => {
 						onSubmit={(e) => handleSubmit(e)}
 					>
 						<div className="col-span-4">
-							<label className="block mb-2 text-md font-semibold dark:text-white">
+							<label className="block text-md dark:text-white font-semibold mb-2">
 								Name
 							</label>
 							<input
 								type="text"
 								id="name"
-								className="w-full block bg-gray-50 dark:bg-slate-600 border border-gray-300 p-3 dark:border-gray-600 rounded-md text-sm dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+								className="w-full block bg-gray-50 dark:bg-slate-600 text-sm dark:text-white border border-gray-300 dark:border-gray-600 rounded-md p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
 								value={name || ""}
 								onChange={(e) => setName(e.target.value)}
 								required
@@ -138,13 +145,13 @@ const Preset = () => {
 						</div>
 
 						<div className="col-span-1">
-							<label className="block mb-2 text-md font-semibold dark:text-white">
+							<label className="block text-md dark:text-white font-semibold mb-2">
 								Symbol
 							</label>
 							<input
 								type="text"
 								id="symbol"
-								className="w-full block bg-gray-50 dark:bg-slate-600 border border-gray-300 p-3 dark:border-gray-600 rounded-md text-sm dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+								className="w-full block bg-gray-50 dark:bg-slate-600 text-sm dark:text-white border border-gray-300 dark:border-gray-600 rounded-md p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
 								value={symbol || ""}
 								onChange={(e) => setSymbol(e.target.value)}
 								required
@@ -152,13 +159,13 @@ const Preset = () => {
 						</div>
 
 						<div className="col-span-2">
-							<label className="block mb-2 text-md font-semibold dark:text-white">
+							<label className="block text-md dark:text-white font-semibold mb-2">
 								Initial Emission Date
 							</label>
 							<input
 								type="string"
 								id="initial-date"
-								className="w-full block bg-gray-50 dark:bg-slate-600 border border-gray-300 p-3 dark:border-gray-600 rounded-md text-sm dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+								className="w-full block bg-gray-50 dark:bg-slate-600 text-sm dark:text-white border border-gray-300 dark:border-gray-600 rounded-md p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
 								maxLength={4}
 								value={initialDate || ""}
 								onChange={(e) =>
@@ -169,13 +176,13 @@ const Preset = () => {
 						</div>
 
 						<div className="col-span-3">
-							<label className="block mb-2 text-md font-semibold dark:text-white">
+							<label className="block text-md dark:text-white font-semibold mb-2">
 								Final Emission Date
 							</label>
 							<input
 								type="string"
 								id="final-date"
-								className="w-full block bg-gray-50 dark:bg-slate-600 border border-gray-300 p-3 dark:border-gray-600 rounded-md text-sm dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+								className="w-full block bg-gray-50 dark:bg-slate-600 text-sm dark:text-white border border-gray-300 dark:border-gray-600 rounded-md p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
 								maxLength={4}
 								value={finalDate || ""}
 								onChange={(e) =>
@@ -186,13 +193,13 @@ const Preset = () => {
 						</div>
 
 						<div className="col-span-5">
-							<label className="block mb-2 text-md font-semibold dark:text-white">
+							<label className="block text-md dark:text-white font-semibold mb-2">
 								Value Range
 							</label>
 							<input
 								type="text"
 								id="value-range"
-								className="w-full block bg-gray-50 dark:bg-slate-600 border border-gray-300 p-3 dark:border-gray-600 rounded-md text-sm dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+								className="w-full block bg-gray-50 dark:bg-slate-600 text-sm dark:text-white border border-gray-300 dark:border-gray-600 rounded-md p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
 								value={valueRange || ""}
 								onChange={(e) => setValueRange(e.target.value)}
 								required

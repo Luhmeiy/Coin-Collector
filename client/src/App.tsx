@@ -1,5 +1,5 @@
 import { AnimatedRoutes } from "./components";
-import { ThemeProvider } from "./context";
+import ThemeProvider from "./context";
 import { BrowserRouter } from "react-router-dom";
 
 export default function App() {

@@ -1,18 +1,29 @@
-import { useContext, useEffect, useState } from "react";
+// Components
+import { Arrow } from "../../components";
+
+// Context
 import { ThemeContext } from "../../context";
-import { motion } from "framer-motion";
-import { CaretDown, CaretUp, PencilSimple, Trash } from "@phosphor-icons/react";
-import { useNavigate } from "react-router-dom";
-import { useDelete } from "../../hooks/useDelete";
-import { sortData } from "../../utils/sortData";
+
+// Hooks
+import { useDelete, useGet, useUpdate } from "../../hooks";
+
+// Interfaces
 import {
 	PropertyProps,
 	SortSettingsProps,
 } from "../../interfaces/SortingProps";
-import { useUpdate } from "../../hooks/useUpdate";
-import Arrow from "../../components/Arrow";
+
+// Libraries
+import { motion } from "framer-motion";
+import { CaretDown, CaretUp, PencilSimple, Trash } from "@phosphor-icons/react";
+
+// React
+import { useContext, useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { ACTIONS } from "../../utils/reducer";
-import { useGet } from "../../hooks/useGet";
+
+// Utils
+import { sortData } from "../../utils/sortData";
 
 interface CoinData {
 	id: string;
@@ -101,10 +112,20 @@ const Home = () => {
 
 		const updatedCoins = (coins ?? []).map((coin) => {
 			if (coin.id === id) {
-				const updatedQuantity =
-					action === "ADD" ? coin.quantity + 1 : coin.quantity - 1;
-				return { ...coin, quantity: updatedQuantity };
+				if (
+					coin.quantity > 1 ||
+					(coin.quantity === 1 && action === "ADD")
+				) {
+					const updatedQuantity =
+						action === "ADD"
+							? coin.quantity + 1
+							: coin.quantity - 1;
+					return { ...coin, quantity: updatedQuantity };
+				} else {
+					alert("Quantity needs to be greater than 1");
+				}
 			}
+
 			return coin;
 		});
 
@@ -142,7 +163,7 @@ const Home = () => {
 			>
 				{state.user && (
 					<>
-						<div className="min-h-[20%] flex items-center justify-between border-b-8 border-b-black p-5">
+						<div className="min-h-[20%] flex justify-between items-center border-b-8 border-b-black p-5">
 							<div>
 								<h1 className="text-2xl font-bold mb-2">
 									Welcome, {state.user.displayName}
@@ -197,7 +218,7 @@ const Home = () => {
 						{coins && sortSettings && (
 							<div>
 								<div
-									className={`grid grid-cols-5 border-b-2 bg-${state.theme} border-black text-xl font-bold text-black p-5 select-none`}
+									className={`grid grid-cols-5 bg-${state.theme} text-xl text-black font-bold  border-b-2 border-black p-5 select-none`}
 								>
 									<p
 										onClick={() => handleSortData("name")}
@@ -338,7 +359,7 @@ const Home = () => {
 			</motion.div>
 
 			<motion.button
-				className="absolute right-0 bg-black text-white break-words w-0 font-semibold px-6 py-2 leading-5"
+				className="w-0 absolute right-0 bg-black text-white font-semibold leading-5 break-words px-6 py-2"
 				initial={{ translateY: -window.innerHeight }}
 				animate={{ translateY: 0 }}
 				exit={{ translateY: -window.innerHeight }}

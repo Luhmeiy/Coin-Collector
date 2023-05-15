@@ -1,7 +1,7 @@
 import { useContext } from "react";
 import { ThemeContext } from "../context";
 
-export const useUpdate = () => {
+const useUpdate = () => {
 	const { state } = useContext(ThemeContext);
 
 	const updateData = async (url: string, data: object) => {
@@ -20,3 +20,5 @@ export const useUpdate = () => {
 
 	return updateData;
 };
+
+export default useUpdate;

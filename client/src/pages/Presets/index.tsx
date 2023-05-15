@@ -1,23 +1,34 @@
-import { useContext, useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+// Components
+import { Arrow } from "../../components";
+
+// Context
 import { ThemeContext } from "../../context";
-import { motion } from "framer-motion";
-import { PencilSimple, Trash } from "@phosphor-icons/react";
-import { useDelete } from "../../hooks/useDelete";
+
+// Hooks
+import { useDelete, useGet, useUpdate } from "../../hooks";
+
+// Interfaces
+import { PresetData } from "../../interfaces/PresetData";
 import {
 	PropertyProps,
 	SortSettingsProps,
 } from "../../interfaces/SortingProps";
-import { sortData } from "../../utils/sortData";
-import { useUpdate } from "../../hooks/useUpdate";
-import Arrow from "../../components/Arrow";
-import { presetData } from "../../interfaces/PresetData";
+
+// Libraries
+import { motion } from "framer-motion";
+import { PencilSimple, Trash } from "@phosphor-icons/react";
+
+// React
+import { useContext, useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { ACTIONS } from "../../utils/reducer";
-import { useGet } from "../../hooks/useGet";
+
+// Utils
+import { sortData } from "../../utils/sortData";
 
 const Presets = () => {
 	const { state, dispatch } = useContext(ThemeContext);
-	const [presets, setPresets] = useState<presetData[]>();
+	const [presets, setPresets] = useState<PresetData[]>();
 	const [sortSettings, setSortSettings] = useState<SortSettingsProps>();
 
 	const [error, setError] = useState<string>();
@@ -95,7 +106,7 @@ const Presets = () => {
 	return (
 		<>
 			<motion.button
-				className="absolute left-0 bg-black text-white break-words w-0 font-semibold px-6 py-2 leading-5"
+				className="w-0 absolute left-0 bg-black text-white font-semibold leading-5 break-words px-6 py-2"
 				initial={{ translateX: window.innerWidth }}
 				animate={{ translateX: 0 }}
 				exit={{ translateX: window.innerWidth }}
@@ -109,7 +120,7 @@ const Presets = () => {
 			</motion.button>
 
 			<motion.div
-				className={`w-[85%] h-[85%] flex flex-col border-8 border-black rounded-2xl bg-light-mode dark:bg-dark-mode dark:text-white shadow-solid overflow-auto`}
+				className={`w-[85%] h-[85%] flex flex-col bg-light-mode dark:bg-dark-mode dark:text-white border-8 border-black rounded-2xl shadow-solid overflow-auto`}
 				initial={{ translateX: window.innerWidth }}
 				animate={{ translateX: 0 }}
 				exit={{ translateX: window.innerWidth }}
@@ -128,7 +139,7 @@ const Presets = () => {
 						{presets && sortSettings && (
 							<div>
 								<div
-									className={`grid grid-cols-6 items-center border-b-2 bg-${state.theme} border-black text-xl font-bold text-black p-5 select-none`}
+									className={`grid grid-cols-6 items-center bg-${state.theme} text-xl text-black font-bold border-b-2 border-black p-5 select-none`}
 								>
 									<p
 										onClick={() => handleSortData("name")}

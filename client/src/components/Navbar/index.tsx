@@ -1,13 +1,22 @@
-import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
-import { ACTIONS } from "../../utils/reducer";
-import { useContext } from "react";
+// Context
 import { ThemeContext } from "../../context";
-import { useNavigate } from "react-router-dom";
+
+// Hooks
+import { useUpdate } from "../../hooks";
+
+// Libraries
+import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import { motion } from "framer-motion";
-import { useUpdate } from "../../hooks/useUpdate";
+
+// React
+import { useContext } from "react";
+import { useNavigate } from "react-router-dom";
+import { ACTIONS } from "../../utils/reducer";
 
 const Navbar = () => {
 	const { state, dispatch } = useContext(ThemeContext);
+
+	const themes = ["green", "blue", "red", "yellow", "pink", "purple"];
 
 	const update = useUpdate();
 	const navigation = useNavigate();
@@ -40,7 +49,7 @@ const Navbar = () => {
 
 	return (
 		<motion.nav
-			className="w-[85%] flex justify-end fixed top-0"
+			className="w-[85%] fixed flex justify-end top-0"
 			initial={{ translateY: -window.innerHeight }}
 			animate={{ translateY: 0 }}
 			exit={{ translateY: -window.innerHeight }}
@@ -57,7 +66,7 @@ const Navbar = () => {
 						</DropdownMenu.Trigger>
 
 						<DropdownMenu.Portal>
-							<DropdownMenu.Content className="grid grid-cols-2 gap-2 bg-black text-white font-semibold p-2 rounded-sm shadow-[0px_10px_38px_-10px_rgba(22,_23,_24,_0.35),_0px_10px_20px_-15px_rgba(22,_23,_24,_0.2)]">
+							<DropdownMenu.Content className="grid grid-cols-2 gap-2 bg-black text-white font-semibold rounded-sm p-2 shadow-[0px_10px_38px_-10px_rgba(22,_23,_24,_0.35),_0px_10px_20px_-15px_rgba(22,_23,_24,_0.2)]">
 								<button
 									onClick={() =>
 										handleDispatch("mode", "light-mode")
@@ -85,43 +94,19 @@ const Navbar = () => {
 						</DropdownMenu.Trigger>
 
 						<DropdownMenu.Portal>
-							<DropdownMenu.Content className="grid grid-cols-2 gap-1 bg-black p-2 rounded-sm shadow-[0px_10px_38px_-10px_rgba(22,_23,_24,_0.35),_0px_10px_20px_-15px_rgba(22,_23,_24,_0.2)]">
-								<button
-									className="w-4 h-4 bg-green-theme"
-									onClick={() =>
-										handleDispatch("theme", "green-theme")
-									}
-								/>
-								<button
-									className="w-4 h-4 bg-blue-theme"
-									onClick={() =>
-										handleDispatch("theme", "blue-theme")
-									}
-								/>
-								<button
-									className="w-4 h-4 bg-red-theme"
-									onClick={() =>
-										handleDispatch("theme", "red-theme")
-									}
-								/>
-								<button
-									className="w-4 h-4 bg-yellow-theme"
-									onClick={() =>
-										handleDispatch("theme", "yellow-theme")
-									}
-								/>
-								<button
-									className="w-4 h-4 bg-pink-theme"
-									onClick={() =>
-										handleDispatch("theme", "pink-theme")
-									}
-								/>
-								<button
-									className="w-4 h-4 bg-purple-theme"
-									onClick={() =>
-										handleDispatch("theme", "purple-theme")
-									}
-								/>
+							<DropdownMenu.Content className="grid grid-cols-2 gap-1 bg-black rounded-sm p-2 shadow-[0px_10px_38px_-10px_rgba(22,_23,_24,_0.35),_0px_10px_20px_-15px_rgba(22,_23,_24,_0.2)]">
+								{themes.map((theme) => (
+									<button
+										className={`w-4 h-4 bg-${theme}-theme`}
+										key={theme}
+										onClick={() =>
+											handleDispatch(
+												"theme",
+												`${theme}-theme`
+											)
+										}
+									/>
+								))}
 
 								<DropdownMenu.Arrow className="fill-black" />
 							</DropdownMenu.Content>

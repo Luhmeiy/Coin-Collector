@@ -10,12 +10,12 @@ const Message = ({ message, type }: MessageProps) => {
 		<>
 			<motion.div
 				key="message"
-				className={`w-full border-2 rounded ${
+				className={`w-full font-semibold border-2 rounded ${
 					type === "success" &&
-					"bg-green-300 border-green-400 text-green-600"
+					"bg-green-300 text-green-600 border-green-400"
 				} ${
-					type === "error" && "bg-red-300 border-red-400 text-red-500"
-				} font-semibold px-6 py-8 mt-6`}
+					type === "error" && "bg-red-300 text-red-500 border-red-400"
+				} px-6 py-8 mt-6`}
 				initial={{ scale: 0 }}
 				animate={{ scale: 1 }}
 				exit={{ scale: 0 }}

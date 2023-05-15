@@ -1,3 +1,11 @@
+// Hooks
+import { useGet } from "../hooks";
+
+// Interfaces
+import { UserData } from "../interfaces/UserData";
+import { ActionData, StateData } from "../interfaces/ReducerProps";
+
+// React
 import {
 	Dispatch,
 	ReactNode,
@@ -6,42 +14,29 @@ import {
 	useEffect,
 	useReducer,
 } from "react";
-import {
-	reducer,
-	initialState,
-	stateData,
-	actionData,
-	ACTIONS,
-} from "../utils/reducer";
+import { useNavigate } from "react-router-dom";
+import { reducer, initialState, ACTIONS } from "../utils/reducer";
+
+// Tailwind
 import resolveConfig from "tailwindcss/resolveConfig";
 import tailwindConfig from "../../tailwind.config";
-import { useNavigate } from "react-router-dom";
-import { useGet } from "../hooks/useGet";
 
-interface themeContextData {
-	state: stateData;
-	dispatch: Dispatch<actionData>;
+interface ThemeContextData {
+	state: StateData;
+	dispatch: Dispatch<ActionData>;
 }
 
-interface userData {
-	email: string;
-	displayName: string;
-	photoURL: string;
-	mode: string;
-	theme: string;
-}
-
-interface fullConfigData {
+interface FullConfigData {
 	theme: any;
 }
 
-export const ThemeContext = createContext<themeContextData>({
+export const ThemeContext = createContext<ThemeContextData>({
 	state: initialState,
 	dispatch: () => null,
 });
 
-export const ThemeProvider = ({ children }: { children: ReactNode }) => {
-	const [state, dispatch] = useReducer<Reducer<stateData, actionData>>(
+const ThemeProvider = ({ children }: { children: ReactNode }) => {
+	const [state, dispatch] = useReducer<Reducer<StateData, ActionData>>(
 		reducer,
 		initialState
 	);
@@ -49,7 +44,7 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
 	const getData = useGet();
 	const navigate = useNavigate();
 
-	const fullConfig: fullConfigData = resolveConfig(tailwindConfig);
+	const fullConfig: FullConfigData = resolveConfig(tailwindConfig);
 
 	document.documentElement.style.setProperty(
 		"--color-gradient-primary",
@@ -61,35 +56,33 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
 		fullConfig.theme.colors[state.mode]
 	);
 
+	async function searchUsers(uid: string) {
+		try {
+			const data = (await getData(`users/${uid}`)) as UserData[];
+
+			dispatch({
+				type: ACTIONS.ADD_USER,
+				payload: { user: data[0] },
+			});
+
+			dispatch({
+				type: ACTIONS.CHANGE_MODE,
+				payload: { mode: data[0].mode },
+			});
+
+			dispatch({
+				type: ACTIONS.CHANGE_THEME,
+				payload: { theme: data[0].theme },
+			});
+
+			document.documentElement.classList.add(data[0].mode.split("-")[0]);
+		} catch (error) {
+			navigate("/register");
+		}
+	}
+
 	useEffect(() => {
 		if (state.userUID) {
-			const searchUsers = async (uid: string) => {
-				try {
-					const data = (await getData(`users/${uid}`)) as userData[];
-
-					dispatch({
-						type: ACTIONS.ADD_USER,
-						payload: { user: data[0] },
-					});
-
-					dispatch({
-						type: ACTIONS.CHANGE_MODE,
-						payload: { mode: data[0].mode },
-					});
-
-					dispatch({
-						type: ACTIONS.CHANGE_THEME,
-						payload: { theme: data[0].theme },
-					});
-
-					document.documentElement.classList.add(
-						data[0].mode.split("-")[0]
-					);
-				} catch (error) {
-					navigate("/register");
-				}
-			};
-
 			searchUsers(state.userUID);
 		} else {
 			navigate("/register");
@@ -102,3 +95,5 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
 		</ThemeContext.Provider>
 	);
 };
+
+export default ThemeProvider;

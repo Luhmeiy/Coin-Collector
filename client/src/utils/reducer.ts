@@ -1,3 +1,5 @@
+import { ActionData, StateData } from "../interfaces/ReducerProps";
+
 export const ACTIONS = {
 	CHANGE_THEME: "change-theme",
 	CHANGE_MODE: "change-mode",
@@ -5,39 +7,7 @@ export const ACTIONS = {
 	ADD_USER_UID: "add-user-uid",
 };
 
-interface userData {
-	email: string;
-	displayName: string;
-	photoURL: string;
-	coinSortSettings?: {
-		asc: boolean;
-		property: string;
-	};
-	presetSortSettings?: {
-		asc: boolean;
-		property: string;
-	};
-}
-
-export interface stateData {
-	theme: string;
-	mode: string;
-	userUID: string | null;
-	user?: userData;
-	serverURL?: string;
-}
-
-export interface actionData {
-	type: string;
-	payload: {
-		theme?: string;
-		mode?: string;
-		user?: userData;
-		userUID?: string;
-	};
-}
-
-export const reducer = (state: stateData, action: actionData): stateData => {
+export const reducer = (state: StateData, action: ActionData): StateData => {
 	switch (action.type) {
 		case ACTIONS.CHANGE_THEME:
 			return { ...state, theme: action.payload.theme || state.theme };

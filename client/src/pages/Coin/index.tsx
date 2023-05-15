@@ -1,13 +1,22 @@
-import { useNavigate, useParams } from "react-router-dom";
-import { AnimatePresence, motion } from "framer-motion";
-import { FormEvent, useContext, useEffect, useState } from "react";
-import { ThemeContext } from "../../context";
-import { X } from "@phosphor-icons/react";
-import { useUpdate } from "../../hooks/useUpdate";
-import { usePost } from "../../hooks/usePost";
+// Components
 import { Message } from "../../components";
-import { presetData } from "../../interfaces/PresetData";
-import { useGet } from "../../hooks/useGet";
+
+// Context
+import { ThemeContext } from "../../context";
+
+// Hooks
+import { useGet, usePost, useUpdate } from "../../hooks";
+
+// Interfaces
+import { PresetData } from "../../interfaces/PresetData";
+
+// Libraries
+import { AnimatePresence, motion } from "framer-motion";
+import { X } from "@phosphor-icons/react";
+
+// React
+import { FormEvent, useContext, useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 
 const Coin = () => {
 	const { coinId } = useParams();
@@ -22,7 +31,7 @@ const Coin = () => {
 	const [error, setError] = useState<string>();
 
 	const [presetUse, setPresetUse] = useState<boolean>(false);
-	const [presets, setPresets] = useState<presetData[]>();
+	const [presets, setPresets] = useState<PresetData[]>();
 	const [selectedPreset, setSelectedPreset] = useState<number>(0);
 
 	const [yearRange, setYearRange] = useState<number[]>();
@@ -151,7 +160,7 @@ const Coin = () => {
 
 	return (
 		<motion.div
-			className={`w-[85%] h-[85%] flex flex-col items-center justify-center relative border-8 border-black rounded-2xl bg-light-mode dark:bg-dark-mode dark:text-white shadow-solid`}
+			className={`w-[85%] h-[85%] relative flex flex-col justify-center items-center bg-light-mode dark:bg-dark-mode border-8 border-black rounded-2xl dark:text-white shadow-solid`}
 			initial={{ scale: 0 }}
 			animate={{ scale: 1 }}
 			exit={{ scale: 0 }}
@@ -190,13 +199,13 @@ const Coin = () => {
 									onSubmit={(e) => handleSubmit(e)}
 								>
 									<div className="col-span-4">
-										<label className="block mb-2 text-md font-semibold dark:text-white">
+										<label className="block text-md dark:text-white font-semibold mb-2">
 											Name
 										</label>
 										<input
 											type="text"
 											id="name"
-											className="w-full block bg-gray-50 dark:bg-slate-600 border border-gray-300 p-3 dark:border-gray-600 rounded-md text-sm dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+											className="w-full block bg-gray-50 dark:bg-slate-600 text-sm dark:text-white border border-gray-300 p-3 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
 											value={name}
 											onChange={(e) =>
 												setName(e.target.value)
@@ -206,13 +215,13 @@ const Coin = () => {
 									</div>
 
 									<div className="col-span-1">
-										<label className="block mb-2 text-md font-semibold dark:text-white">
+										<label className="block mb-2 text-md dark:text-white font-semibold">
 											Symbol
 										</label>
 										<input
 											type="text"
 											id="symbol"
-											className="w-full block bg-gray-50 dark:bg-slate-600 border border-gray-300 p-3 dark:border-gray-600 rounded-md text-sm dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+											className="w-full block bg-gray-50 dark:bg-slate-600 text-sm dark:text-white border border-gray-300 p-3 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
 											value={symbol}
 											onChange={(e) =>
 												setSymbol(e.target.value)
@@ -222,13 +231,13 @@ const Coin = () => {
 									</div>
 
 									<div className="col-span-2">
-										<label className="block mb-2 text-md font-semibold dark:text-white">
+										<label className="block mb-2 text-md dark:text-white font-semibold">
 											Value
 										</label>
 										<input
 											type="number"
 											id="value"
-											className="w-full block bg-gray-50 dark:bg-slate-600 border border-gray-300 p-3 dark:border-gray-600 rounded-md text-sm dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+											className="w-full block bg-gray-50 dark:bg-slate-600 text-sm dark:text-white border border-gray-300 p-3 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
 											value={value}
 											onChange={(e) =>
 												setValue(Number(e.target.value))
@@ -238,13 +247,13 @@ const Coin = () => {
 									</div>
 
 									<div className="col-span-2">
-										<label className="block mb-2 text-md font-semibold dark:text-white">
+										<label className="block mb-2 text-md dark:text-white font-semibold">
 											Year
 										</label>
 										<input
 											type="text"
 											id="year"
-											className="w-full block bg-gray-50 dark:bg-slate-600 border border-gray-300 p-3 dark:border-gray-600 rounded-md text-sm dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+											className="w-full block bg-gray-50 dark:bg-slate-600 text-sm dark:text-white border border-gray-300 p-3 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
 											maxLength={4}
 											value={year}
 											onChange={(e) =>
@@ -255,13 +264,13 @@ const Coin = () => {
 									</div>
 
 									<div className="col-span-1">
-										<label className="block mb-2 text-md font-semibold dark:text-white">
+										<label className="block mb-2 text-md dark:text-white font-semibold">
 											Quantity
 										</label>
 										<input
-											type="text"
+											type="number"
 											id="quantity"
-											className="w-full block bg-gray-50 dark:bg-slate-600 border border-gray-300 p-3 dark:border-gray-600 rounded-md text-sm dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+											className="w-full block bg-gray-50 dark:bg-slate-600 text-sm dark:text-white border border-gray-300 p-3 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
 											value={quantity}
 											onChange={(e) =>
 												setQuantity(
@@ -285,11 +294,11 @@ const Coin = () => {
 									onSubmit={(e) => handleSubmit(e)}
 								>
 									<div className="col-span-4">
-										<label className="block mb-2 text-md font-semibold dark:text-white">
+										<label className="block mb-2 text-md dark:text-white font-semibold">
 											Coin
 										</label>
 										<select
-											className="w-full block bg-gray-50 dark:bg-slate-600 border border-gray-300 p-3 dark:border-gray-600 rounded-md text-sm dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+											className="w-full block bg-gray-50 dark:bg-slate-600 text-sm dark:text-white border border-gray-300 p-3 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
 											value={selectedPreset}
 											onChange={(e) =>
 												handleSelectedPreset(
@@ -319,13 +328,13 @@ const Coin = () => {
 									</div>
 
 									<div className="col-span-1">
-										<label className="block mb-2 text-md font-semibold dark:text-white">
+										<label className="block mb-2 text-md dark:text-white font-semibold">
 											Symbol
 										</label>
 										<input
 											type="text"
 											id="symbol"
-											className="w-full block bg-gray-50 dark:bg-slate-600 border border-gray-300 p-3 dark:border-gray-600 rounded-md text-sm dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+											className="w-full block bg-gray-50 dark:bg-slate-600 text-sm dark:text-white border border-gray-300 p-3 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
 											value={symbol}
 											onChange={(e) =>
 												setSymbol(e.target.value)
@@ -335,11 +344,11 @@ const Coin = () => {
 									</div>
 
 									<div className="col-span-2">
-										<label className="block mb-2 text-md font-semibold dark:text-white">
+										<label className="block mb-2 text-md dark:text-white font-semibold">
 											Value
 										</label>
 										<select
-											className="w-full block bg-gray-50 dark:bg-slate-600 border border-gray-300 p-3 dark:border-gray-600 rounded-md text-sm dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+											className="w-full block bg-gray-50 dark:bg-slate-600 text-sm dark:text-white border border-gray-300 p-3 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
 											value={value}
 											onChange={(e) =>
 												setValue(+e.target.value)
@@ -361,11 +370,11 @@ const Coin = () => {
 									</div>
 
 									<div className="col-span-2">
-										<label className="block mb-2 text-md font-semibold dark:text-white">
+										<label className="block mb-2 text-md dark:text-white font-semibold">
 											Year
 										</label>
 										<select
-											className="w-full block bg-gray-50 dark:bg-slate-600 border border-gray-300 p-3 dark:border-gray-600 rounded-md text-sm dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+											className="w-full block bg-gray-50 dark:bg-slate-600 text-sm dark:text-white border border-gray-300 p-3 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
 											value={year}
 											onChange={(e) =>
 												setYear(+e.target.value)
@@ -385,13 +394,13 @@ const Coin = () => {
 									</div>
 
 									<div className="col-span-1">
-										<label className="block mb-2 text-md font-semibold dark:text-white">
+										<label className="block mb-2 text-md dark:text-white font-semibold">
 											Quantity
 										</label>
 										<input
-											type="text"
+											type="number"
 											id="quantity"
-											className="w-full block bg-gray-50 dark:bg-slate-600 border border-gray-300 p-3 dark:border-gray-600 rounded-md text-sm dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+											className="w-full block bg-gray-50 dark:bg-slate-600 text-sm dark:text-white border border-gray-300 p-3 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
 											value={quantity}
 											onChange={(e) =>
 												setQuantity(

@@ -1,7 +1,12 @@
-import { Route, Routes, useLocation } from "react-router-dom";
-import { Coin, Home, Preset, Presets, SignIn } from "../../pages";
-import { AnimatePresence } from "framer-motion";
+// Components / Pages
 import { Navbar } from "../";
+import { Coin, Home, Preset, Presets, SignIn } from "../../pages";
+
+// Libraries
+import { AnimatePresence } from "framer-motion";
+
+// React
+import { Route, Routes, useLocation } from "react-router-dom";
 
 const AnimatedRoutes = () => {
 	const location = useLocation();
