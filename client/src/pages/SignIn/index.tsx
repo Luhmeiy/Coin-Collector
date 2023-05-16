@@ -13,7 +13,7 @@ import { motion } from "framer-motion";
 import { GoogleLogo } from "@phosphor-icons/react";
 
 // React
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { ACTIONS } from "../../utils/reducer";
 
@@ -79,6 +79,12 @@ const SignIn = () => {
 			alert(error.message);
 		}
 	}
+
+	useEffect(() => {
+		if (state.user) {
+			navigate("/");
+		}
+	}, [state.user]);
 
 	return (
 		<motion.div

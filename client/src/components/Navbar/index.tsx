@@ -16,8 +16,6 @@ import { ACTIONS } from "../../utils/reducer";
 const Navbar = () => {
 	const { state, dispatch } = useContext(ThemeContext);
 
-	const themes = ["green", "blue", "red", "yellow", "pink", "purple"];
-
 	const update = useUpdate();
 	const navigation = useNavigate();
 
@@ -95,18 +93,42 @@ const Navbar = () => {
 
 						<DropdownMenu.Portal>
 							<DropdownMenu.Content className="grid grid-cols-2 gap-1 bg-black rounded-sm p-2 shadow-[0px_10px_38px_-10px_rgba(22,_23,_24,_0.35),_0px_10px_20px_-15px_rgba(22,_23,_24,_0.2)]">
-								{themes.map((theme) => (
-									<button
-										className={`w-4 h-4 bg-${theme}-theme`}
-										key={theme}
-										onClick={() =>
-											handleDispatch(
-												"theme",
-												`${theme}-theme`
-											)
-										}
-									/>
-								))}
+								<button
+									className="w-4 h-4 bg-green-theme"
+									onClick={() =>
+										handleDispatch("theme", "green-theme")
+									}
+								/>
+								<button
+									className="w-4 h-4 bg-blue-theme"
+									onClick={() =>
+										handleDispatch("theme", "blue-theme")
+									}
+								/>
+								<button
+									className="w-4 h-4 bg-red-theme"
+									onClick={() =>
+										handleDispatch("theme", "red-theme")
+									}
+								/>
+								<button
+									className="w-4 h-4 bg-yellow-theme"
+									onClick={() =>
+										handleDispatch("theme", "yellow-theme")
+									}
+								/>
+								<button
+									className="w-4 h-4 bg-pink-theme"
+									onClick={() =>
+										handleDispatch("theme", "pink-theme")
+									}
+								/>
+								<button
+									className="w-4 h-4 bg-purple-theme"
+									onClick={() =>
+										handleDispatch("theme", "purple-theme")
+									}
+								/>
 
 								<DropdownMenu.Arrow className="fill-black" />
 							</DropdownMenu.Content>
