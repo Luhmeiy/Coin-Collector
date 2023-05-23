@@ -6,14 +6,18 @@ export default {
 	theme: {
 		extend: {
 			colors: {
-				"dark-mode": "#615f61",
-				"light-mode": "#ece3cd",
-				"green-theme": "#acd1bf",
-				"blue-theme": "#b7d3d1",
+				"dark-mode": "#27272a",
+				"light-mode": "#f4f4f5",
+				"green-theme": "#a5d6b1",
+				"blue-theme": "#aed9e0",
 				"red-theme": "#eb9988",
-				"yellow-theme": "#ffeec0",
-				"pink-theme": "#f4c4c3",
-				"purple-theme": "#e4cAfc",
+				"yellow-theme": "#f4e2a5",
+				"pink-theme": "#f1a7b3",
+				"purple-theme": "#c7b5e2",
+			},
+			fontFamily: {
+				title: ["Raleway", "sans-serif"],
+				montserrat: ["Montserrat", "sans-serif"],
 			},
 		},
 	},

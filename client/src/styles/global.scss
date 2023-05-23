@@ -2,30 +2,56 @@
 @tailwind components;
 @tailwind utilities;
 
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&family=Raleway:wght@700&display=swap");
+
 @layer base {
 	input[type="number"]::-webkit-inner-spin-button,
 	input[type="number"]::-webkit-outer-spin-button {
 		-webkit-appearance: none;
 		margin: 0;
 	}
+
+	.shadow-solid {
+		box-shadow: 12.5px 12.5px #000;
+	}
+
+	.container {
+		border: 0.25rem solid #000;
+		border-radius: 1rem;
+		box-shadow: 0.75rem 0.75rem #000;
+	}
+
+	.input_container {
+		display: flex;
+		flex-direction: column;
+
+		& span {
+			font-weight: 600;
+		}
+
+		& input {
+			@extend .input;
+		}
+	}
+
+	.input {
+		background-color: transparent;
+		border: 0.125rem solid #000;
+		border-radius: 0.375rem;
+		box-shadow: 0.125rem 0.125rem #000;
+		box-sizing: border-box;
+		display: flex;
+		outline: #acd1bf;
+		padding-block: 0.25rem;
+		padding-inline: 0.5rem;
+		width: 100%;
+
+		&::placeholder {
+			color: #6b7280;
+		}
+	}
 }
 
 :root {
 	--color-gradient-primary: #acd1bf;
-	--color-gradient-secondary: #615f61;
-}
-
-.bg-pattern {
-	background: repeating-linear-gradient(
-		-30deg,
-		var(--color-gradient-primary),
-		var(--color-gradient-primary) 25px,
-		var(--color-gradient-secondary) 25px,
-		var(--color-gradient-secondary) 75px
-	);
-	background-color: --color-gradient-secondary;
-}
-
-.shadow-solid {
-	box-shadow: 12.5px 12.5px #000;
 }

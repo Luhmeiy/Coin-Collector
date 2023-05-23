@@ -51,11 +51,6 @@ const ThemeProvider = ({ children }: { children: ReactNode }) => {
 		fullConfig.theme.colors[state.theme]
 	);
 
-	document.documentElement.style.setProperty(
-		"--color-gradient-secondary",
-		fullConfig.theme.colors[state.mode]
-	);
-
 	async function searchUsers(uid: string) {
 		try {
 			const data = (await getData(`users/${uid}`)) as UserData[];
