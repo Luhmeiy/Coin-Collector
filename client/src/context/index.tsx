@@ -14,7 +14,7 @@ import {
 	useEffect,
 	useReducer,
 } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { reducer, initialState, ACTIONS } from "../utils/reducer";
 
 // Tailwind
@@ -42,6 +42,7 @@ const ThemeProvider = ({ children }: { children: ReactNode }) => {
 	);
 
 	const getData = useGet();
+	const location = useLocation();
 	const navigate = useNavigate();
 
 	const fullConfig: FullConfigData = resolveConfig(tailwindConfig);
@@ -80,7 +81,7 @@ const ThemeProvider = ({ children }: { children: ReactNode }) => {
 		if (state.userUID) {
 			searchUsers(state.userUID);
 		} else {
-			navigate("/register");
+			if (!(location.pathname === "/register")) navigate("/login");
 		}
 	}, [state.userUID, state.theme, state.mode]);
 

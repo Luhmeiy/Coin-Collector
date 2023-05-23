@@ -1,6 +1,6 @@
 // Components / Pages
 import { Navbar } from "../";
-import { Coin, Home, Preset, Presets, Register } from "../../pages";
+import { Coin, Home, Login, Preset, Presets, Register } from "../../pages";
 
 // Libraries
 import { AnimatePresence } from "framer-motion";
@@ -18,6 +18,7 @@ const AnimatedRoutes = () => {
 			<Routes location={location} key={location.pathname}>
 				<Route path="/" element={<Home />} />
 				<Route path="/register" element={<Register />} />
+				<Route path="/login" element={<Login />} />
 				<Route path="/presets" element={<Presets />} />
 				<Route path="/add/coin" element={<Coin />} />
 				<Route path="/add/preset" element={<Preset />} />

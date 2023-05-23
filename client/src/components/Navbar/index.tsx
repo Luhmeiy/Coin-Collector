@@ -42,12 +42,12 @@ const Navbar = () => {
 			payload: { user: undefined },
 		});
 
-		navigation("/register");
+		navigation("/login");
 	}
 
 	return (
 		<motion.nav
-			className="w-[85%] fixed flex justify-end top-0"
+			className="fixed top-0 flex w-[85%] justify-end"
 			initial={{ translateY: -window.innerHeight }}
 			animate={{ translateY: 0 }}
 			exit={{ translateY: -window.innerHeight }}
@@ -59,12 +59,12 @@ const Navbar = () => {
 			{state.user && (
 				<>
 					<DropdownMenu.Root>
-						<DropdownMenu.Trigger className="bg-black text-white font-semibold px-6 py-2 mr-5">
+						<DropdownMenu.Trigger className="mr-5 bg-black px-6 py-2 font-semibold text-white">
 							Modes
 						</DropdownMenu.Trigger>
 
 						<DropdownMenu.Portal>
-							<DropdownMenu.Content className="grid grid-cols-2 gap-2 bg-black text-white font-semibold rounded-sm p-2 shadow-[0px_10px_38px_-10px_rgba(22,_23,_24,_0.35),_0px_10px_20px_-15px_rgba(22,_23,_24,_0.2)]">
+							<DropdownMenu.Content className="grid grid-cols-2 gap-2 rounded-sm bg-black p-2 font-semibold text-white shadow-[0px_10px_38px_-10px_rgba(22,_23,_24,_0.35),_0px_10px_20px_-15px_rgba(22,_23,_24,_0.2)]">
 								<button
 									onClick={() =>
 										handleDispatch("mode", "light-mode")
@@ -87,44 +87,44 @@ const Navbar = () => {
 					</DropdownMenu.Root>
 
 					<DropdownMenu.Root>
-						<DropdownMenu.Trigger className="bg-black text-white font-semibold px-6 py-2 mr-5">
+						<DropdownMenu.Trigger className="mr-5 bg-black px-6 py-2 font-semibold text-white">
 							Themes
 						</DropdownMenu.Trigger>
 
 						<DropdownMenu.Portal>
-							<DropdownMenu.Content className="grid grid-cols-2 gap-1 bg-black rounded-sm p-2 shadow-[0px_10px_38px_-10px_rgba(22,_23,_24,_0.35),_0px_10px_20px_-15px_rgba(22,_23,_24,_0.2)]">
+							<DropdownMenu.Content className="grid grid-cols-2 gap-1 rounded-sm bg-black p-2 shadow-[0px_10px_38px_-10px_rgba(22,_23,_24,_0.35),_0px_10px_20px_-15px_rgba(22,_23,_24,_0.2)]">
 								<button
-									className="w-4 h-4 bg-green-theme"
+									className="h-4 w-4 bg-green-theme"
 									onClick={() =>
 										handleDispatch("theme", "green-theme")
 									}
 								/>
 								<button
-									className="w-4 h-4 bg-blue-theme"
+									className="h-4 w-4 bg-blue-theme"
 									onClick={() =>
 										handleDispatch("theme", "blue-theme")
 									}
 								/>
 								<button
-									className="w-4 h-4 bg-red-theme"
+									className="h-4 w-4 bg-red-theme"
 									onClick={() =>
 										handleDispatch("theme", "red-theme")
 									}
 								/>
 								<button
-									className="w-4 h-4 bg-yellow-theme"
+									className="h-4 w-4 bg-yellow-theme"
 									onClick={() =>
 										handleDispatch("theme", "yellow-theme")
 									}
 								/>
 								<button
-									className="w-4 h-4 bg-pink-theme"
+									className="h-4 w-4 bg-pink-theme"
 									onClick={() =>
 										handleDispatch("theme", "pink-theme")
 									}
 								/>
 								<button
-									className="w-4 h-4 bg-purple-theme"
+									className="h-4 w-4 bg-purple-theme"
 									onClick={() =>
 										handleDispatch("theme", "purple-theme")
 									}
@@ -136,7 +136,7 @@ const Navbar = () => {
 					</DropdownMenu.Root>
 
 					<button
-						className="bg-black text-white font-semibold px-6 py-2 mr-10"
+						className="mr-10 bg-black px-6 py-2 font-semibold text-white"
 						onClick={handleSignOut}
 					>
 						Sign Out
