@@ -18,6 +18,14 @@ interface UserData {
 	email: string;
 	displayName: string;
 	photoURL: string;
+	password?: string;
+}
+
+interface FullUserData extends UserData {
+	theme: string;
+	mode: string;
+	coinSortSettings: {};
+	presetSortSettings: {};
 }
 
 interface CoinData {
@@ -104,14 +112,14 @@ export const registerUser = async (
 ) => {
 	const docRef = doc(db, path, uid);
 
-	const { email, displayName, photoURL } = data;
+	const { email, displayName, photoURL, password } = data;
 
 	const defaultOrder = {
 		property: "name",
 		asc: true,
 	};
 
-	const userData = {
+	const userData: FullUserData = {
 		email,
 		displayName,
 		photoURL,
@@ -120,6 +128,10 @@ export const registerUser = async (
 		coinSortSettings: defaultOrder,
 		presetSortSettings: defaultOrder,
 	};
+
+	if (password) {
+		userData.password = password;
+	}
 
 	try {
 		await setDoc(docRef, userData);

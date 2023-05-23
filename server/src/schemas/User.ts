@@ -22,5 +22,6 @@ export const userSchema = z.object({
 			.url({
 				message: "Insert a valid url",
 			}),
+		password: z.optional(z.string()),
 	}),
 });
