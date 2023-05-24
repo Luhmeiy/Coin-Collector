@@ -21,5 +21,6 @@ export const coinSchema = z.object({
 				required_error: "Quantity is required",
 			})
 			.min(1, { message: "Quantity must be greater than 1" }),
+		note: z.optional(z.string()),
 	}),
 });

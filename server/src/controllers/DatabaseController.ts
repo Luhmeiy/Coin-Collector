@@ -34,6 +34,7 @@ interface CoinData {
 	value: number;
 	year: number;
 	quantity: number;
+	note?: string;
 }
 
 export const getData = async (
@@ -150,7 +151,8 @@ export const verifyIfCoinExists = async (path: string, data: CoinData) => {
 		where("name", "==", data.name),
 		where("symbol", "==", data.symbol),
 		where("value", "==", data.value),
-		where("year", "==", data.year)
+		where("year", "==", data.year),
+		where("note", "==", data.note)
 	);
 
 	try {
