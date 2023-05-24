@@ -2,7 +2,26 @@
 @tailwind components;
 @tailwind utilities;
 
-@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&family=Raleway:wght@700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&family=Raleway:wght@600;700&display=swap");
+
+$dark-bg-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyMCIgaGVpZ2h0PSIyMCIgZmlsbD0iI2ZmZiIgdmlld0JveD0iMCAwIDI1NiAyNTYiPjxwYXRoIGQ9Ik0yMTYuNDksMTA0LjQ5bC04MCw4MGExMiwxMiwwLDAsMS0xNywwbC04MC04MGExMiwxMiwwLDAsMSwxNy0xN0wxMjgsMTU5bDcxLjUxLTcxLjUyYTEyLDEyLDAsMCwxLDE3LDE3WiI+PC9wYXRoPjwvc3ZnPg==");
+$light-bg-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyMCIgaGVpZ2h0PSIyMCIgZmlsbD0iIzAwMDAwMCIgdmlld0JveD0iMCAwIDI1NiAyNTYiPjxwYXRoIGQ9Ik0yMTYuNDksMTA0LjQ5bC04MCw4MGExMiwxMiwwLDAsMS0xNywwbC04MC04MGExMiwxMiwwLDAsMSwxNy0xN0wxMjgsMTU5bDcxLjUxLTcxLjUyYTEyLDEyLDAsMCwxLDE3LDE3WiI+PC9wYXRoPjwvc3ZnPg==");
+
+@mixin select-background-image($mode) {
+	background-image: if($mode == dark, $dark-bg-image, $light-bg-image);
+}
+
+.light {
+	select {
+		@include select-background-image(light);
+	}
+}
+
+.dark {
+	select {
+		@include select-background-image(dark);
+	}
+}
 
 @layer base {
 	input[type="number"]::-webkit-inner-spin-button,
@@ -12,16 +31,12 @@
 	}
 
 	.shadow-solid {
-		box-shadow: 12.5px 12.5px #000;
-	}
-
-	.container {
 		border: 0.25rem solid #000;
 		border-radius: 1rem;
 		box-shadow: 0.75rem 0.75rem #000;
 	}
 
-	.input_container {
+	.input-container {
 		display: flex;
 		flex-direction: column;
 
@@ -29,8 +44,23 @@
 			font-weight: 600;
 		}
 
-		& input {
+		& input,
+		& textarea {
 			@extend .input;
+		}
+
+		& select {
+			@extend .input;
+			appearance: none;
+			background-position: right 1rem center;
+			background-repeat: no-repeat;
+			background-size: 1em;
+			@include select-background-image(light);
+
+			& option {
+				border: none;
+				color: #000;
+			}
 		}
 	}
 
@@ -40,7 +70,6 @@
 		border-radius: 0.375rem;
 		box-shadow: 0.125rem 0.125rem #000;
 		box-sizing: border-box;
-		display: flex;
 		outline: #acd1bf;
 		padding-block: 0.25rem;
 		padding-inline: 0.5rem;

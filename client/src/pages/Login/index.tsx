@@ -60,8 +60,8 @@ const Login = () => {
 			const results = await signInWithPopup(auth, provider);
 
 			searchUsers(results.user);
-		} catch (error: any) {
-			alert(error);
+		} catch (error) {
+			if (error instanceof Error) alert(error);
 		}
 	}
 
@@ -72,8 +72,8 @@ const Login = () => {
 			await getData(`users/${uid}`);
 
 			login(uid);
-		} catch (error: any) {
-			alert("User not registered");
+		} catch (error) {
+			if (error instanceof Error) alert("User not registered");
 		}
 	}
 
@@ -92,7 +92,7 @@ const Login = () => {
 
 	return (
 		<motion.div
-			className="container z-10 grid min-h-[65%] w-[85%] grid-cols-2 items-center justify-items-center bg-light-mode p-24 dark:bg-dark-mode"
+			className="shadow-solid z-10 grid min-h-[65%] w-[85%] grid-cols-2 items-center justify-items-center bg-light-mode p-24 dark:bg-dark-mode"
 			initial={{ translateY: window.innerHeight }}
 			animate={{ translateY: 0 }}
 			exit={{ translateY: window.innerHeight }}

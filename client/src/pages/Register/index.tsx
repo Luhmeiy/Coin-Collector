@@ -70,8 +70,8 @@ const Register = () => {
 			const results = await signInWithPopup(auth, provider);
 
 			searchUsers(results.user);
-		} catch (error: any) {
-			alert(error);
+		} catch (error) {
+			if (error instanceof Error) alert(error);
 		}
 	}
 
@@ -82,7 +82,7 @@ const Register = () => {
 			await getData(`users/${uid}`);
 
 			login(uid);
-		} catch (error: any) {
+		} catch (error) {
 			registerUser(userData);
 		}
 	}
@@ -120,8 +120,8 @@ const Register = () => {
 			}
 
 			login(uid);
-		} catch (error: any) {
-			alert(error.message);
+		} catch (error) {
+			if (error instanceof Error) alert(error.message);
 		}
 	}
 
@@ -133,7 +133,7 @@ const Register = () => {
 
 	return (
 		<motion.div
-			className="container z-10 grid min-h-[65%] w-[85%] grid-cols-2 items-center justify-items-center bg-light-mode p-24 dark:bg-dark-mode"
+			className="shadow-solid z-10 grid min-h-[65%] w-[85%] grid-cols-2 items-center justify-items-center bg-light-mode p-24 dark:bg-dark-mode"
 			initial={{ translateY: window.innerHeight }}
 			animate={{ translateY: 0 }}
 			exit={{ translateY: window.innerHeight }}
