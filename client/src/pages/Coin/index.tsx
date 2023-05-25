@@ -107,7 +107,7 @@ const Coin = () => {
 
 	return (
 		<motion.div
-			className={`shadow-solid relative z-10 flex h-[85%] w-[85%] flex-col items-center justify-center bg-light-mode dark:bg-dark-mode dark:text-white`}
+			className="shadow-solid relative z-10 flex h-[85%] w-[85%] flex-col items-center justify-center bg-light-mode dark:bg-dark-mode dark:text-white"
 			initial={{ scale: 0 }}
 			animate={{ scale: 1 }}
 			exit={{ scale: 0 }}

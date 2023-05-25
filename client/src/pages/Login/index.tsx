@@ -117,7 +117,7 @@ const Login = () => {
 
 				<form onSubmit={handleSignIn}>
 					<div className="mb-8 flex flex-col gap-5">
-						<label className="input_container">
+						<label className="input-container">
 							<span>Email</span>
 							<input
 								type="email"
@@ -128,7 +128,7 @@ const Login = () => {
 							/>
 						</label>
 
-						<label className="input_container">
+						<label className="input-container">
 							<span>Password</span>
 							<input
 								type="password"

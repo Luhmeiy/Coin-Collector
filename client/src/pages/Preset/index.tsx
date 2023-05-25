@@ -102,7 +102,7 @@ const Preset = () => {
 
 	return (
 		<motion.div
-			className={`w-[85%] h-[85%] relative flex flex-col justify-center items-center bg-light-mode dark:bg-dark-mode dark:text-white border-8 border-black rounded-2xl shadow-solid`}
+			className="shadow-solid relative z-10 flex h-[85%] w-[85%] flex-col items-center justify-center bg-light-mode dark:bg-dark-mode dark:text-white"
 			initial={{ scale: 0 }}
 			animate={{ scale: 1 }}
 			exit={{ scale: 0 }}
@@ -112,7 +112,7 @@ const Preset = () => {
 			}}
 		>
 			<button
-				className="absolute top-4 right-4"
+				className="absolute right-4 top-4"
 				onClick={() =>
 					presetId ? navigate("/presets") : navigate("/")
 				}
@@ -121,97 +121,102 @@ const Preset = () => {
 			</button>
 
 			<div className="w-[50%]">
-				<h1 className="text-4xl font-bold text-center mb-5">
+				<h1 className="mb-6 text-center text-[4rem] font-bold">
 					{presetId ? "Edit" : "Add"} Preset
 				</h1>
 
 				{!loading && (
-					<form
-						className="grid grid-cols-5 gap-5"
-						onSubmit={(e) => handleSubmit(e)}
-					>
-						<div className="col-span-4">
-							<label className="block text-md dark:text-white font-semibold mb-2">
-								Name
-							</label>
-							<input
-								type="text"
-								id="name"
-								className="w-full block bg-gray-50 dark:bg-slate-600 text-sm dark:text-white border border-gray-300 dark:border-gray-600 rounded-md p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
-								value={name || ""}
-								onChange={(e) => setName(e.target.value)}
-								required
-							/>
-						</div>
-
-						<div className="col-span-1">
-							<label className="block text-md dark:text-white font-semibold mb-2">
-								Symbol
-							</label>
-							<input
-								type="text"
-								id="symbol"
-								className="w-full block bg-gray-50 dark:bg-slate-600 text-sm dark:text-white border border-gray-300 dark:border-gray-600 rounded-md p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
-								value={symbol || ""}
-								onChange={(e) => setSymbol(e.target.value)}
-								required
-							/>
-						</div>
-
-						<div className="col-span-2">
-							<label className="block text-md dark:text-white font-semibold mb-2">
-								Initial Emission Date
-							</label>
-							<input
-								type="string"
-								id="initial-date"
-								className="w-full block bg-gray-50 dark:bg-slate-600 text-sm dark:text-white border border-gray-300 dark:border-gray-600 rounded-md p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
-								maxLength={4}
-								value={initialDate || ""}
-								onChange={(e) =>
-									setInitialDate(Number(e.target.value))
-								}
-								required
-							/>
-						</div>
-
-						<div className="col-span-3">
-							<label className="block text-md dark:text-white font-semibold mb-2">
-								Final Emission Date
-							</label>
-							<input
-								type="string"
-								id="final-date"
-								className="w-full block bg-gray-50 dark:bg-slate-600 text-sm dark:text-white border border-gray-300 dark:border-gray-600 rounded-md p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
-								maxLength={4}
-								value={finalDate || ""}
-								onChange={(e) =>
-									setFinalDate(Number(e.target.value))
-								}
-								required
-							/>
-						</div>
-
-						<div className="col-span-5">
-							<label className="block text-md dark:text-white font-semibold mb-2">
-								Value Range
-							</label>
-							<input
-								type="text"
-								id="value-range"
-								className="w-full block bg-gray-50 dark:bg-slate-600 text-sm dark:text-white border border-gray-300 dark:border-gray-600 rounded-md p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
-								value={valueRange || ""}
-								onChange={(e) => setValueRange(e.target.value)}
-								required
-							/>
-						</div>
-
-						<button
-							className="col-start-2 col-span-3 flex justify-center self-center bg-green-500 text-white font-semibold rounded-md px-6 py-2 mt-2 hover:bg-green-600 active:bg-green-400 disabled:bg-gray-400 disabled:cursor-not-allowed"
-							disabled={success}
+					<>
+						<form
+							className="grid grid-cols-5 gap-5 py-2"
+							onSubmit={handleSubmit}
 						>
-							{presetId ? "Edit" : "Add"}
-						</button>
+							<div className="col-span-4">
+								<label className="input-container">
+									<span>Name</span>
+									<input
+										type="text"
+										className="!px-4 !py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+										value={name || ""}
+										onChange={(e) =>
+											setName(e.target.value)
+										}
+										required
+									/>
+								</label>
+							</div>
+
+							<div className="col-span-1">
+								<label className="input-container">
+									<span>Symbol</span>
+									<input
+										type="text"
+										className="!px-4 !py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+										value={symbol || ""}
+										onChange={(e) =>
+											setSymbol(e.target.value)
+										}
+										required
+									/>
+								</label>
+							</div>
+
+							<div className="col-span-2">
+								<label className="input-container">
+									<span>Initial Emission Date</span>
+									<input
+										type="number"
+										className="!px-4 !py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+										value={initialDate || ""}
+										onChange={(e) => {
+											if (e.target.value.length <= 4) {
+												setInitialDate(+e.target.value);
+											}
+										}}
+										required
+									/>
+								</label>
+							</div>
+
+							<div className="col-span-3">
+								<label className="input-container">
+									<span>Final Emission Date</span>
+									<input
+										type="number"
+										className="!px-4 !py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+										value={finalDate || ""}
+										onChange={(e) => {
+											if (e.target.value.length <= 4) {
+												setFinalDate(+e.target.value);
+											}
+										}}
+										required
+									/>
+								</label>
+							</div>
+
+							<div className="col-span-5">
+								<label className="input-container">
+									<span>Value Range</span>
+									<input
+										type="string"
+										className="!px-4 !py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+										value={valueRange || ""}
+										onChange={(e) =>
+											setValueRange(e.target.value)
+										}
+										required
+									/>
+								</label>
+							</div>
+
+							<button
+								className="input col-span-3 col-start-2 mt-2 flex justify-center self-center bg-green-500 px-6 py-2 font-semibold text-white transition-all duration-500 hover:bg-green-600 active:bg-green-400 disabled:cursor-not-allowed disabled:bg-gray-400"
+								disabled={success}
+							>
+								{presetId ? "Edit" : "Add"}
+							</button>
+						</form>
 
 						<AnimatePresence>
 							{success && (
@@ -224,7 +229,7 @@ const Preset = () => {
 							)}
 							{error && <Message message={error} type="error" />}
 						</AnimatePresence>
-					</form>
+					</>
 				)}
 			</div>
 		</motion.div>

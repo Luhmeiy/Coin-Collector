@@ -72,7 +72,7 @@ const Navbar = () => {
 							</DropdownMenu.Trigger>
 
 							<DropdownMenu.Portal>
-								<DropdownMenu.Content className="grid grid-cols-2 gap-2 rounded-sm bg-black p-2 font-semibold text-white shadow-[0px_10px_38px_-10px_rgba(22,_23,_24,_0.35),_0px_10px_20px_-15px_rgba(22,_23,_24,_0.2)]">
+								<DropdownMenu.Content className="z-20 grid grid-cols-2 gap-2 rounded-sm bg-black p-2 font-semibold text-white shadow-[0px_10px_38px_-10px_rgba(22,_23,_24,_0.35),_0px_10px_20px_-15px_rgba(22,_23,_24,_0.2)]">
 									<button
 										onClick={() =>
 											handleDispatch("mode", "light-mode")
@@ -100,7 +100,7 @@ const Navbar = () => {
 							</DropdownMenu.Trigger>
 
 							<DropdownMenu.Portal>
-								<DropdownMenu.Content className="grid grid-cols-2 gap-1 rounded-sm bg-black p-2 shadow-[0px_10px_38px_-10px_rgba(22,_23,_24,_0.35),_0px_10px_20px_-15px_rgba(22,_23,_24,_0.2)]">
+								<DropdownMenu.Content className="z-20 grid grid-cols-2 gap-1 rounded-sm bg-black p-2 shadow-[0px_10px_38px_-10px_rgba(22,_23,_24,_0.35),_0px_10px_20px_-15px_rgba(22,_23,_24,_0.2)]">
 									<button
 										className="h-4 w-4 bg-green-theme"
 										onClick={() =>

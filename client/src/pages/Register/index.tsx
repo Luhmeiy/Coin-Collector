@@ -166,7 +166,7 @@ const Register = () => {
 
 				<form onSubmit={handleSignUp}>
 					<div className="mb-8 flex flex-col gap-5">
-						<label className="input_container">
+						<label className="input-container">
 							<span>Name</span>
 							<input
 								type="text"
@@ -177,7 +177,7 @@ const Register = () => {
 							/>
 						</label>
 
-						<label className="input_container">
+						<label className="input-container">
 							<span>Email</span>
 							<input
 								type="email"
@@ -188,7 +188,7 @@ const Register = () => {
 							/>
 						</label>
 
-						<label className="input_container">
+						<label className="input-container">
 							<span>Password</span>
 							<input
 								type="password"
