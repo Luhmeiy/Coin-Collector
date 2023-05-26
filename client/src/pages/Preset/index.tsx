@@ -102,7 +102,7 @@ const Preset = () => {
 
 	return (
 		<motion.div
-			className="shadow-solid relative z-10 flex h-[85%] w-[85%] flex-col items-center justify-center bg-light-mode dark:bg-dark-mode dark:text-white"
+			className="shadow-solid relative z-10 flex h-[85%] w-[85%] flex-col items-center justify-center bg-light-mode dark:bg-dark-mode dark:text-gray-100"
 			initial={{ scale: 0 }}
 			animate={{ scale: 1 }}
 			exit={{ scale: 0 }}
@@ -197,7 +197,12 @@ const Preset = () => {
 
 							<div className="col-span-5">
 								<label className="input-container">
-									<span>Value Range</span>
+									<span>
+										Value Range{" "}
+										<span className="!font-normal">
+											(Separated by comma)
+										</span>
+									</span>
 									<input
 										type="string"
 										className="!px-4 !py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -211,7 +216,7 @@ const Preset = () => {
 							</div>
 
 							<button
-								className="input col-span-3 col-start-2 mt-2 flex justify-center self-center bg-green-500 px-6 py-2 font-semibold text-white transition-all duration-500 hover:bg-green-600 active:bg-green-400 disabled:cursor-not-allowed disabled:bg-gray-400"
+								className="input col-span-3 col-start-2 mt-2 flex justify-center self-center bg-green-500 px-6 py-2 font-semibold text-gray-100 transition-all duration-500 hover:bg-green-600 active:bg-green-400 disabled:cursor-not-allowed disabled:bg-gray-400"
 								disabled={success}
 							>
 								{presetId ? "Edit" : "Add"}

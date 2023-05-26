@@ -106,7 +106,7 @@ const Presets = () => {
 	return (
 		<>
 			<motion.button
-				className="w-0 absolute left-0 bg-black text-white font-semibold leading-5 break-words px-6 py-2"
+				className="absolute left-0 z-10 w-0 break-words bg-black px-6 py-2 text-center font-semibold uppercase leading-5 text-gray-100"
 				initial={{ translateX: window.innerWidth }}
 				animate={{ translateX: 0 }}
 				exit={{ translateX: window.innerWidth }}
@@ -120,7 +120,7 @@ const Presets = () => {
 			</motion.button>
 
 			<motion.div
-				className={`w-[85%] h-[85%] flex flex-col bg-light-mode dark:bg-dark-mode dark:text-white border-8 border-black rounded-2xl shadow-solid overflow-auto`}
+				className="shadow-solid z-10 flex h-[85%] w-[85%] flex-col overflow-hidden bg-light-mode dark:bg-dark-mode dark:text-gray-100"
 				initial={{ translateX: window.innerWidth }}
 				animate={{ translateX: 0 }}
 				exit={{ translateX: window.innerWidth }}
@@ -132,18 +132,19 @@ const Presets = () => {
 				{state.user && (
 					<>
 						{error && (
-							<div className="h-full flex justify-center items-center text-lg font-semibold">
+							<div className="flex h-full items-center justify-center text-lg font-semibold">
 								{error}
 							</div>
 						)}
+
 						{presets && sortSettings && (
-							<div>
+							<div className="flex flex-col overflow-y-hidden">
 								<div
-									className={`grid grid-cols-6 items-center bg-${state.theme} text-xl text-black font-bold border-b-2 border-black p-5 select-none`}
+									className={`grid grid-cols-7 items-center gap-3 bg-${state.theme} select-none border-b-2 border-black p-5 text-lg font-semibold text-gray-800`}
 								>
 									<p
 										onClick={() => handleSortData("name")}
-										className="flex items-center gap-1 cursor-pointer"
+										className="flex cursor-pointer items-center gap-1"
 									>
 										Preset Name
 										{sortSettings.property === "name" && (
@@ -159,9 +160,9 @@ const Presets = () => {
 												"initial_emission_date"
 											)
 										}
-										className="flex items-center gap-1 cursor-pointer"
+										className="flex cursor-pointer items-center gap-1"
 									>
-										Initial Emission Date
+										Initial Emission
 										{sortSettings.property ===
 											"initial_emission_date" && (
 											<Arrow
@@ -175,9 +176,9 @@ const Presets = () => {
 												"final_emission_date"
 											)
 										}
-										className="flex items-center gap-1 cursor-pointer"
+										className="flex cursor-pointer items-center gap-1"
 									>
-										Final Emission Date
+										Final Emission
 										{sortSettings.property ===
 											"final_emission_date" && (
 											<Arrow
@@ -186,16 +187,16 @@ const Presets = () => {
 										)}
 									</p>
 									<p>Value Range</p>
-									<p>Actions</p>
+									<p className="col-span-2">Actions</p>
 								</div>
 
 								<div
-									className={`[&>*:nth-child(even)]:bg-${state.mode} [&>*:nth-child(even)]:backdrop-brightness-75`}
+									className={`[&>*:nth-child(even)]:bg-${state.mode} overflow-y-auto scrollbar scrollbar-thumb-${state.theme} [&>*:nth-child(even)]:backdrop-brightness-75`}
 								>
 									{presets.map((preset) => (
 										<div
 											key={preset.id}
-											className="grid grid-cols-6 items-center p-4"
+											className="grid grid-cols-7 items-center gap-3 border-b-2 border-r-2 border-black p-5"
 										>
 											<p>{preset.name}</p>
 											<p>{preset.symbol}</p>
@@ -224,9 +225,9 @@ const Presets = () => {
 												)}
 											</p>
 
-											<div className="flex flex-wrap gap-4">
+											<div className="col-span-2 flex flex-wrap gap-2">
 												<button
-													className="flex items-center bg-gray-300 dark:bg-slate-500 text-black rounded-md px-6 py-2  hover:bg-gray-400 dark:hover:bg-slate-600 active:bg-gray-200 dark:active:bg-slate-400"
+													className="input flex w-auto items-center gap-2 bg-gray-300 px-6 py-2 font-semibold text-gray-800 hover:bg-gray-400 active:bg-gray-200 dark:bg-slate-500 dark:hover:bg-slate-600 dark:active:bg-slate-400"
 													onClick={() =>
 														navigate(
 															`/edit/preset/${preset.id}`
@@ -236,13 +237,12 @@ const Presets = () => {
 													<PencilSimple
 														size={20}
 														weight="bold"
-														className="mr-2"
 													/>{" "}
 													Edit
 												</button>
 
 												<button
-													className="flex items-center bg-red-400 text-black rounded-md px-6 py-2 hover:bg-red-500 active:bg-red-300"
+													className="input flex w-auto items-center gap-2 bg-red-400 px-6 py-2 font-semibold text-gray-800 hover:bg-red-500 active:bg-red-300"
 													onClick={() =>
 														handleDeletePreset(
 															preset.id
@@ -252,7 +252,6 @@ const Presets = () => {
 													<Trash
 														size={20}
 														weight="bold"
-														className="mr-2"
 													/>{" "}
 													Delete
 												</button>

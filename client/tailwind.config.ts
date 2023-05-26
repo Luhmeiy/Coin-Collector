@@ -1,4 +1,8 @@
 import type { Config } from "tailwindcss";
+import tailwindScrollbar from "tailwind-scrollbar";
+
+const plugin = tailwindScrollbar({ nocompatible: true });
+const { handler } = plugin;
 
 export default {
 	content: ["./src/**/*.{js,jsx,ts,tsx}"],
@@ -21,6 +25,5 @@ export default {
 			},
 		},
 	},
-	plugins: [],
+	plugins: [handler],
 } satisfies Config;
-
