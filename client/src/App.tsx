@@ -9,7 +9,7 @@ export default function App() {
 		<BrowserRouter>
 			<ThemeProvider>
 				<div
-					className={`h-screen flex flex-col items-center justify-center bg-light-mode text-gray-800 font-montserrat dark:bg-dark-mode dark:text-gray-100 overflow-hidden`}
+					className={`flex h-screen flex-col items-center justify-center overflow-hidden bg-light-mode font-montserrat text-gray-800 dark:bg-dark-mode dark:text-gray-100`}
 				>
 					<WebTop />
 					<AnimatedRoutes />
@@ -19,4 +19,3 @@ export default function App() {
 		</BrowserRouter>
 	);
 }
-

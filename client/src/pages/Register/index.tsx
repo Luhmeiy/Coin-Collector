@@ -211,7 +211,7 @@ const Register = () => {
 						<hr className="w-[3.125rem] self-center dark:border-zinc-700" />
 
 						<button
-							className={`input flex w-full items-center justify-center py-2 font-semibold text-black transition-all duration-500 hover:bg-black/10 dark:text-gray-100`}
+							className={`input flex w-full items-center justify-center py-2 font-semibold text-gray-800 transition-all duration-500 hover:bg-black/10 dark:text-gray-100`}
 							onClick={handleGoogleSignUp}
 						>
 							<GoogleLogo

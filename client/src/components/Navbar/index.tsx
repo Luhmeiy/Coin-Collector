@@ -60,19 +60,19 @@ const Navbar = () => {
 				<div className="flex justify-between">
 					<Link
 						to="/"
-						className="bg-black px-6 py-2 font-title font-semibold uppercase text-white"
+						className="bg-black px-6 py-2 font-title font-semibold uppercase text-gray-100"
 					>
 						Coin Collector
 					</Link>
 
 					<div>
 						<DropdownMenu.Root>
-							<DropdownMenu.Trigger className="mr-5 bg-black px-6 py-2 font-semibold uppercase text-white">
+							<DropdownMenu.Trigger className="mr-5 bg-black px-6 py-2 font-semibold uppercase text-gray-100">
 								Modes
 							</DropdownMenu.Trigger>
 
 							<DropdownMenu.Portal>
-								<DropdownMenu.Content className="z-20 grid grid-cols-2 gap-2 rounded-sm bg-black p-2 font-semibold text-white shadow-[0px_10px_38px_-10px_rgba(22,_23,_24,_0.35),_0px_10px_20px_-15px_rgba(22,_23,_24,_0.2)]">
+								<DropdownMenu.Content className="z-20 grid grid-cols-2 gap-2 rounded-sm bg-black p-2 font-semibold text-gray-100 shadow-[0px_10px_38px_-10px_rgba(22,_23,_24,_0.35),_0px_10px_20px_-15px_rgba(22,_23,_24,_0.2)]">
 									<button
 										onClick={() =>
 											handleDispatch("mode", "light-mode")
@@ -95,7 +95,7 @@ const Navbar = () => {
 						</DropdownMenu.Root>
 
 						<DropdownMenu.Root>
-							<DropdownMenu.Trigger className="mr-5 bg-black px-6 py-2 font-semibold uppercase text-white">
+							<DropdownMenu.Trigger className="mr-5 bg-black px-6 py-2 font-semibold uppercase text-gray-100">
 								Themes
 							</DropdownMenu.Trigger>
 
@@ -159,7 +159,7 @@ const Navbar = () => {
 						</DropdownMenu.Root>
 
 						<button
-							className="bg-black px-6 py-2 font-semibold uppercase text-white"
+							className="bg-black px-6 py-2 font-semibold uppercase text-gray-100"
 							onClick={handleSignOut}
 						>
 							Sign Out

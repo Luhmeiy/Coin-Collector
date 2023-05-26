@@ -107,7 +107,7 @@ const Coin = () => {
 
 	return (
 		<motion.div
-			className="shadow-solid relative z-10 flex h-[85%] w-[85%] flex-col items-center justify-center bg-light-mode dark:bg-dark-mode dark:text-white"
+			className="shadow-solid relative z-10 flex h-[85%] w-[85%] flex-col items-center justify-center bg-light-mode dark:bg-dark-mode dark:text-gray-100"
 			initial={{ scale: 0 }}
 			animate={{ scale: 1 }}
 			exit={{ scale: 0 }}
@@ -131,7 +131,7 @@ const Coin = () => {
 				<div className="flex flex-col items-center gap-6">
 					{!coinId && (
 						<button
-							className={`bg-${state.theme} input w-auto px-5 py-2 font-semibold text-black hover:brightness-90 active:brightness-110`}
+							className={`bg-${state.theme} input w-auto px-5 py-2 font-semibold text-gray-800 hover:brightness-90 active:brightness-110`}
 							onClick={() => setPresetUse(!presetUse)}
 						>
 							{!presetUse ? "Use Preset" : "Cancel"}
