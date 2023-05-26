@@ -15,6 +15,7 @@ import {
 
 // Libraries
 import { motion } from "framer-motion";
+import * as HoverCard from "@radix-ui/react-hover-card";
 import { CaretDown, CaretUp, PencilSimple, Trash } from "@phosphor-icons/react";
 
 // React
@@ -32,6 +33,7 @@ interface CoinData {
 	value: number;
 	year: number;
 	quantity: number;
+	note?: string;
 }
 
 const Home = () => {
@@ -152,7 +154,7 @@ const Home = () => {
 	return (
 		<>
 			<motion.div
-				className={`w-[85%] h-[85%] flex flex-col border-8 border-black rounded-2xl bg-light-mode dark:bg-dark-mode dark:text-white shadow-solid overflow-auto`}
+				className="shadow-solid z-10 flex h-[85%] w-[85%] flex-col overflow-hidden bg-light-mode dark:bg-dark-mode dark:text-gray-100"
 				initial={{ translateY: -window.innerHeight }}
 				animate={{ translateY: 0 }}
 				exit={{ translateY: -window.innerHeight }}
@@ -163,15 +165,18 @@ const Home = () => {
 			>
 				{state.user && (
 					<>
-						<div className="min-h-[20%] flex justify-between items-center border-b-8 border-b-black p-5">
+						<div className="flex min-h-[20%] items-center justify-between border-b-4 border-b-black p-5">
 							<div>
-								<h1 className="text-2xl font-bold mb-2">
-									Welcome, {state.user.displayName}
+								<h1 className="mb-2 text-xl">
+									Welcome,{" "}
+									<span className="font-semibold">
+										{state.user.displayName}
+									</span>
 								</h1>
 
 								{coins && (
 									<>
-										<p className="text-lg">
+										<p>
 											Collected Coins:{" "}
 											<span className="font-semibold">
 												{coins.reduce(
@@ -183,7 +188,7 @@ const Home = () => {
 											</span>
 										</p>
 
-										<p className="text-lg">
+										<p>
 											Unique Coins:{" "}
 											<span className="font-semibold">
 												{coins.length}
@@ -195,13 +200,13 @@ const Home = () => {
 
 							<div className="flex flex-col items-stretch gap-2">
 								<button
-									className={`flex justify-center bg-${state.theme} text-black rounded-md px-6 py-2 hover:brightness-90 active:brightness-110`}
+									className={`flex justify-center bg-${state.theme} input px-6 py-2 font-semibold text-gray-800 hover:brightness-90 active:brightness-110`}
 									onClick={() => navigate("/add/coin")}
 								>
 									Add Coin
 								</button>
 								<button
-									className={`flex justify-center bg-${state.theme} text-black rounded-md px-6 py-2 hover:brightness-90 active:brightness-110`}
+									className={`flex justify-center bg-${state.theme} input px-6 py-2 font-semibold text-gray-800 hover:brightness-90 active:brightness-110`}
 									onClick={() => navigate("/add/preset")}
 								>
 									Add Preset
@@ -210,19 +215,19 @@ const Home = () => {
 						</div>
 
 						{error && (
-							<div className="h-full flex justify-center items-center text-lg font-semibold">
+							<div className="flex h-full items-center justify-center text-lg font-semibold">
 								{error}
 							</div>
 						)}
 
 						{coins && sortSettings && (
-							<div>
+							<div className="flex flex-col overflow-y-hidden">
 								<div
-									className={`grid grid-cols-5 bg-${state.theme} text-xl text-black font-bold  border-b-2 border-black p-5 select-none`}
+									className={`grid grid-cols-6 gap-3 bg-${state.theme} select-none border-b-2 border-black p-5 text-lg font-semibold text-gray-800`}
 								>
 									<p
 										onClick={() => handleSortData("name")}
-										className="flex items-center gap-1 cursor-pointer"
+										className="flex cursor-pointer items-center gap-1"
 									>
 										Coin
 										{sortSettings.property === "name" && (
@@ -233,7 +238,7 @@ const Home = () => {
 									</p>
 									<p
 										onClick={() => handleSortData("value")}
-										className="flex items-center gap-1 cursor-pointer"
+										className="flex cursor-pointer items-center gap-1"
 									>
 										Value
 										{sortSettings.property === "value" && (
@@ -244,7 +249,7 @@ const Home = () => {
 									</p>
 									<p
 										onClick={() => handleSortData("year")}
-										className="flex items-center gap-1 cursor-pointer"
+										className="flex cursor-pointer items-center gap-1"
 									>
 										Year
 										{sortSettings.property === "year" && (
@@ -257,7 +262,7 @@ const Home = () => {
 										onClick={() =>
 											handleSortData("quantity")
 										}
-										className="flex items-center gap-1 cursor-pointer"
+										className="flex cursor-pointer items-center gap-1"
 									>
 										Quantity
 										{sortSettings.property ===
@@ -267,18 +272,51 @@ const Home = () => {
 											/>
 										)}
 									</p>
-									<p>Actions</p>
+									<p className="col-span-2">Actions</p>
 								</div>
 
 								<div
-									className={`[&>*:nth-child(even)]:bg-${state.mode} [&>*:nth-child(even)]:backdrop-brightness-75`}
+									className={`[&>*:nth-child(even)]:bg-${state.mode} overflow-y-auto scrollbar scrollbar-thumb-zinc-400 [&>*:nth-child(even)]:backdrop-brightness-75`}
 								>
 									{coins.map((coin, i) => (
 										<div
 											key={coin.id}
-											className="grid grid-cols-5 items-center p-4"
+											className="grid grid-cols-6 items-center gap-3 border-b-2 border-r-2 border-black p-5"
 										>
-											<p>{coin.name}</p>
+											<p>
+												{coin.name}{" "}
+												{coin.note && (
+													<HoverCard.Root
+														openDelay={0}
+													>
+														<HoverCard.Trigger
+															asChild
+														>
+															<sup
+																className="cursor-pointer font-semibold"
+																rel="noreferrer noopener"
+															>
+																(note)
+															</sup>
+														</HoverCard.Trigger>
+
+														<HoverCard.Portal>
+															<HoverCard.Content
+																className="input z-20 max-w-[300px] bg-light-mode p-3 dark:bg-dark-mode dark:text-gray-100"
+																side="right"
+																sideOffset={6}
+															>
+																<span className="font-semibold">
+																	Note:{" "}
+																</span>
+																{coin.note}
+
+																<HoverCard.Arrow className="fill-black" />
+															</HoverCard.Content>
+														</HoverCard.Portal>
+													</HoverCard.Root>
+												)}
+											</p>
 											<p>
 												{coin.symbol} {coin.value}
 											</p>
@@ -316,9 +354,9 @@ const Home = () => {
 												</div>
 											</div>
 
-											<div className="flex flex-wrap gap-4">
+											<div className="col-span-2 flex flex-wrap gap-2">
 												<button
-													className="flex items-center bg-gray-300 dark:bg-slate-500 text-black rounded-md px-6 py-2  hover:bg-gray-400 dark:hover:bg-slate-600 active:bg-gray-200 dark:active:bg-slate-400"
+													className="input flex w-auto items-center bg-gray-300 px-6 py-2 font-semibold text-gray-800 hover:bg-gray-400 active:bg-gray-200 dark:bg-slate-500 dark:hover:bg-slate-600 dark:active:bg-slate-400"
 													onClick={() =>
 														navigate(
 															`/edit/coin/${coin.id}`
@@ -334,7 +372,7 @@ const Home = () => {
 												</button>
 
 												<button
-													className="flex items-center bg-red-400 text-black rounded-md px-6 py-2 hover:bg-red-500 active:bg-red-300"
+													className="input flex w-auto items-center rounded-md bg-red-400 px-6 py-2 font-semibold text-gray-800 hover:bg-red-500 active:bg-red-300"
 													onClick={() =>
 														handleDeleteCoin(
 															coin.id
@@ -359,7 +397,7 @@ const Home = () => {
 			</motion.div>
 
 			<motion.button
-				className="w-0 absolute right-0 bg-black text-white font-semibold leading-5 break-words px-6 py-2"
+				className="absolute right-0 z-10 w-0 break-words bg-black px-6 py-2 font-semibold uppercase leading-5 text-gray-100"
 				initial={{ translateY: -window.innerHeight }}
 				animate={{ translateY: 0 }}
 				exit={{ translateY: -window.innerHeight }}

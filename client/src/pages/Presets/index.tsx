@@ -191,7 +191,7 @@ const Presets = () => {
 								</div>
 
 								<div
-									className={`[&>*:nth-child(even)]:bg-${state.mode} overflow-y-auto scrollbar scrollbar-thumb-${state.theme} [&>*:nth-child(even)]:backdrop-brightness-75`}
+									className={`[&>*:nth-child(even)]:bg-${state.mode} overflow-y-auto scrollbar scrollbar-thumb-zinc-400 [&>*:nth-child(even)]:backdrop-brightness-75`}
 								>
 									{presets.map((preset) => (
 										<div
