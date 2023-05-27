@@ -145,15 +145,19 @@ export const registerUser = async (
 export const verifyIfCoinExists = async (path: string, data: CoinData) => {
 	const results: DocumentData = [];
 
-	const dbRef = collection(db, path);
-	const q = query(
-		dbRef,
+	const queryParams = [
 		where("name", "==", data.name),
 		where("symbol", "==", data.symbol),
 		where("value", "==", data.value),
 		where("year", "==", data.year),
-		where("note", "==", data.note)
-	);
+	];
+
+	if (data.note) {
+		queryParams.push(where("note", "==", data.note));
+	}
+
+	const dbRef = collection(db, path);
+	const q = query(dbRef, ...queryParams);
 
 	try {
 		const docsSnap = await getDocs(q);
