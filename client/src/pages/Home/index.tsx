@@ -1,5 +1,5 @@
 // Components
-import { Arrow } from "../../components";
+import { Arrow, FloatingMessage } from "../../components";
 
 // Context
 import { ThemeContext } from "../../context";
@@ -14,7 +14,7 @@ import {
 } from "../../interfaces/SortingProps";
 
 // Libraries
-import { motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import * as HoverCard from "@radix-ui/react-hover-card";
 import { CaretDown, CaretUp, PencilSimple, Trash } from "@phosphor-icons/react";
 
@@ -60,16 +60,22 @@ const Home = () => {
 			);
 
 			setCoins(data);
-		} catch (error: any) {
-			setError(error.message);
+		} catch (error) {
+			if (error instanceof Error) {
+				setError(error.message);
+				setTimeout(() => setError(""), 3000);
+			}
 		}
 	}
 
 	async function handleDeleteCoin(coinId: string) {
 		try {
 			await deleteData(`coins/${state.userUID}/coin/${coinId}`);
-		} catch (error: any) {
-			alert(error.message);
+		} catch (error) {
+			if (error instanceof Error) {
+				setError(error.message);
+				setTimeout(() => setError(""), 3000);
+			}
 		}
 
 		if (sortSettings) fetchCoins(sortSettings);
@@ -99,8 +105,11 @@ const Home = () => {
 				await update(`users/${state.userUID}`, {
 					coinSortSettings: newSort,
 				});
-			} catch (error: any) {
-				alert(error.message);
+			} catch (error) {
+				if (error instanceof Error) {
+					setError(error.message);
+					setTimeout(() => setError(""), 3000);
+				}
 			}
 		}
 	}
@@ -111,6 +120,8 @@ const Home = () => {
 		action: "ADD" | "SUBTRACT"
 	) {
 		if (!coins) return;
+
+		let exitFunction = false;
 
 		const updatedCoins = (coins ?? []).map((coin) => {
 			if (coin.id === id) {
@@ -124,12 +135,17 @@ const Home = () => {
 							: coin.quantity - 1;
 					return { ...coin, quantity: updatedQuantity };
 				} else {
-					alert("Quantity needs to be greater than 1");
+					setError("Quantity needs to be greater than 1");
+					setTimeout(() => setError(""), 3000);
+
+					exitFunction = true;
 				}
 			}
 
 			return coin;
 		});
+
+		if (exitFunction) return;
 
 		setCoins(updatedCoins);
 
@@ -138,8 +154,11 @@ const Home = () => {
 				`coins/${state.userUID}/coin/${id}`,
 				updatedCoins[index]
 			);
-		} catch (error: any) {
-			alert(error.message);
+		} catch (error) {
+			if (error instanceof Error) {
+				setError(error.message);
+				setTimeout(() => setError(""), 3000);
+			}
 		}
 	}
 
@@ -165,6 +184,10 @@ const Home = () => {
 			>
 				{state.user && (
 					<>
+						<AnimatePresence>
+							{error && <FloatingMessage message={error} />}
+						</AnimatePresence>
+
 						<div className="flex min-h-[20%] items-center justify-between border-b-4 border-b-black p-5">
 							<div>
 								<h1 className="mb-2 text-xl">
@@ -214,9 +237,9 @@ const Home = () => {
 							</div>
 						</div>
 
-						{error && (
+						{!coins && (
 							<div className="flex h-full items-center justify-center text-lg font-semibold">
-								{error}
+								No coins here
 							</div>
 						)}
 

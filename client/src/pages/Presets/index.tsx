@@ -1,5 +1,5 @@
 // Components
-import { Arrow } from "../../components";
+import { Arrow, FloatingMessage } from "../../components";
 
 // Context
 import { ThemeContext } from "../../context";
@@ -15,7 +15,7 @@ import {
 } from "../../interfaces/SortingProps";
 
 // Libraries
-import { motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { PencilSimple, Trash } from "@phosphor-icons/react";
 
 // React
@@ -50,16 +50,22 @@ const Presets = () => {
 			);
 
 			setPresets(data);
-		} catch (error: any) {
-			setError(error.message);
+		} catch (error) {
+			if (error instanceof Error) {
+				setError(error.message);
+				setTimeout(() => setError(""), 3000);
+			}
 		}
 	}
 
 	async function handleDeletePreset(presetId: string) {
 		try {
 			await deleteData(`presets/${state.userUID}/preset/${presetId}`);
-		} catch (error: any) {
-			alert(error.message);
+		} catch (error) {
+			if (error instanceof Error) {
+				setError(error.message);
+				setTimeout(() => setError(""), 3000);
+			}
 		}
 
 		if (sortSettings) fetchPresets(sortSettings);
@@ -89,8 +95,11 @@ const Presets = () => {
 				await update(`users/${state.userUID}`, {
 					presetSortSettings: newSort,
 				});
-			} catch (error: any) {
-				alert(error.message);
+			} catch (error) {
+				if (error instanceof Error) {
+					setError(error.message);
+					setTimeout(() => setError(""), 3000);
+				}
 			}
 		}
 	}
@@ -131,9 +140,13 @@ const Presets = () => {
 			>
 				{state.user && (
 					<>
-						{error && (
+						<AnimatePresence>
+							{error && <FloatingMessage message={error} />}
+						</AnimatePresence>
+
+						{!presets && (
 							<div className="flex h-full items-center justify-center text-lg font-semibold">
-								{error}
+								No presets here
 							</div>
 						)}
 

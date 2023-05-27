@@ -15,16 +15,20 @@ import { auth } from "../../services/firebase";
 import { useGet } from "../../hooks";
 
 // Libraries
-import { motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { GoogleLogo } from "@phosphor-icons/react";
 
 // React
 import { FormEvent, useContext, useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { ACTIONS } from "../../utils/reducer";
+import { FloatingMessage } from "../../components";
 
 const Login = () => {
 	const { state, dispatch } = useContext(ThemeContext);
+
+	const [success, setSuccess] = useState<boolean>(false);
+	const [error, setError] = useState<string>();
 
 	const [email, setEmail] = useState<string>("");
 	const [password, setPassword] = useState<string>("");
@@ -36,6 +40,8 @@ const Login = () => {
 		e.preventDefault();
 
 		const auth = getAuth();
+
+		setSuccess(true);
 
 		try {
 			if (email && password) {
@@ -49,19 +55,29 @@ const Login = () => {
 				searchUsers(user);
 			}
 		} catch (error) {
-			alert("User not registered");
+			setError("User not registered");
+			setTimeout(() => setError(""), 3000);
+
+			setSuccess(false);
 		}
 	}
 
 	async function handleGoogleSignIn() {
 		const provider = new GoogleAuthProvider();
 
+		setSuccess(true);
+
 		try {
 			const results = await signInWithPopup(auth, provider);
 
 			searchUsers(results.user);
 		} catch (error) {
-			if (error instanceof Error) alert(error);
+			if (error instanceof Error) {
+				setError(error.message);
+				setTimeout(() => setError(""), 3000);
+
+				setSuccess(false);
+			}
 		}
 	}
 
@@ -73,7 +89,10 @@ const Login = () => {
 
 			login(uid);
 		} catch (error) {
-			if (error instanceof Error) alert("User not registered");
+			setError("User not registered");
+			setTimeout(() => setError(""), 3000);
+
+			setSuccess(false);
 		}
 	}
 
@@ -101,6 +120,10 @@ const Login = () => {
 				ease: "easeInOut",
 			}}
 		>
+			<AnimatePresence>
+				{error && <FloatingMessage message={error} />}
+			</AnimatePresence>
+
 			<div>
 				<h1 className="mb-4 font-title text-[4rem] font-bold uppercase leading-tight">
 					Coin <br /> Collector
@@ -143,7 +166,8 @@ const Login = () => {
 					<div className="flex flex-col gap-4">
 						<button
 							type="submit"
-							className={`flex w-full items-center justify-center bg-${state.theme} input py-2 font-semibold text-gray-800 transition-all duration-500 hover:brightness-90`}
+							className={`flex w-full items-center justify-center bg-${state.theme} input py-2 font-semibold text-gray-800 transition-all duration-500 hover:brightness-90 disabled:cursor-not-allowed disabled:bg-gray-400`}
+							disabled={success}
 						>
 							Login
 						</button>
@@ -151,8 +175,9 @@ const Login = () => {
 						<hr className="w-[3.125rem] self-center dark:border-zinc-700" />
 
 						<button
-							className={`input flex w-full items-center justify-center py-2 font-semibold text-gray-800 transition-all duration-500 hover:bg-black/10 dark:text-gray-100`}
+							className={`input flex w-full items-center justify-center py-2 font-semibold text-gray-800 transition-all duration-500 hover:bg-black/10 disabled:cursor-not-allowed disabled:bg-gray-400 dark:text-gray-100`}
 							onClick={handleGoogleSignIn}
+							disabled={success}
 						>
 							<GoogleLogo
 								size={22}

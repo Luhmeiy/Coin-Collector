@@ -15,13 +15,14 @@ import { auth } from "../../services/firebase";
 import { useGet, usePost } from "../../hooks";
 
 // Libraries
-import { motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { GoogleLogo } from "@phosphor-icons/react";
 
 // React
 import { FormEvent, useContext, useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { ACTIONS } from "../../utils/reducer";
+import { FloatingMessage } from "../../components";
 
 interface UserData {
 	uid: string;
@@ -33,6 +34,9 @@ interface UserData {
 
 const Register = () => {
 	const { state, dispatch } = useContext(ThemeContext);
+
+	const [success, setSuccess] = useState<boolean>(false);
+	const [error, setError] = useState<string>();
 
 	const [name, setName] = useState<string>("");
 	const [email, setEmail] = useState<string>("");
@@ -47,6 +51,8 @@ const Register = () => {
 
 		const auth = getAuth();
 
+		setSuccess(true);
+
 		try {
 			if (email && password) {
 				const userCredential = await createUserWithEmailAndPassword(
@@ -59,19 +65,29 @@ const Register = () => {
 				searchUsers(user);
 			}
 		} catch (error) {
-			alert("User already registered");
+			setError("User already registered");
+			setTimeout(() => setError(""), 3000);
+
+			setSuccess(false);
 		}
 	}
 
 	async function handleGoogleSignUp() {
 		const provider = new GoogleAuthProvider();
 
+		setSuccess(true);
+
 		try {
 			const results = await signInWithPopup(auth, provider);
 
 			searchUsers(results.user);
 		} catch (error) {
-			if (error instanceof Error) alert(error);
+			if (error instanceof Error) {
+				setError(error.message);
+				setTimeout(() => setError(""), 3000);
+
+				setSuccess(false);
+			}
 		}
 	}
 
@@ -121,7 +137,12 @@ const Register = () => {
 
 			login(uid);
 		} catch (error) {
-			if (error instanceof Error) alert(error.message);
+			if (error instanceof Error) {
+				setError(error.message);
+				setTimeout(() => setError(""), 3000);
+
+				setSuccess(false);
+			}
 		}
 	}
 
@@ -142,6 +163,10 @@ const Register = () => {
 				ease: "easeInOut",
 			}}
 		>
+			<AnimatePresence>
+				{error && <FloatingMessage message={error} />}
+			</AnimatePresence>
+
 			<div>
 				<h1 className="mb-4 font-title text-[4rem] font-bold uppercase leading-tight">
 					Coin
@@ -203,7 +228,8 @@ const Register = () => {
 					<div className="flex flex-col gap-4">
 						<button
 							type="submit"
-							className={`flex w-full items-center justify-center bg-${state.theme} input py-2 font-semibold text-gray-800 transition-all duration-500 hover:brightness-90`}
+							className={`input flex w-full items-center justify-center bg-${state.theme} py-2 font-semibold text-gray-800 transition-all duration-500 hover:brightness-90 disabled:cursor-not-allowed disabled:bg-gray-400`}
+							disabled={success}
 						>
 							Create Account
 						</button>
@@ -211,8 +237,9 @@ const Register = () => {
 						<hr className="w-[3.125rem] self-center dark:border-zinc-700" />
 
 						<button
-							className={`input flex w-full items-center justify-center py-2 font-semibold text-gray-800 transition-all duration-500 hover:bg-black/10 dark:text-gray-100`}
+							className={`input flex w-full items-center justify-center py-2 font-semibold text-gray-800 transition-all duration-500 hover:bg-black/10 disabled:cursor-not-allowed disabled:bg-gray-400 dark:text-gray-100`}
 							onClick={handleGoogleSignUp}
+							disabled={success}
 						>
 							<GoogleLogo
 								size={22}
