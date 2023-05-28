@@ -78,6 +78,13 @@ $light-bg-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53
 		&::placeholder {
 			color: #6b7280;
 		}
+
+		&--search {
+			background: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyMCIgaGVpZ2h0PSIyMCIgZmlsbD0iIzAwMDAwMCIgdmlld0JveD0iMCAwIDI1NiAyNTYiPjxwYXRoIGQ9Ik0yMzIuNDksMjE1LjUxLDE4NSwxNjhhOTIuMTIsOTIuMTIsMCwxLDAtMTcsMTdsNDcuNTMsNDcuNTRhMTIsMTIsMCwwLDAsMTctMTdaTTQ0LDExMmE2OCw2OCwwLDEsMSw2OCw2OEE2OC4wNyw2OC4wNywwLDAsMSw0NCwxMTJaIj48L3BhdGg+PC9zdmc+")
+				no-repeat scroll;
+			background-position: right 0.25rem center;
+			padding-right: 1.75rem;
+		}
 	}
 }
 

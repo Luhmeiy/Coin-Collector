@@ -12,6 +12,7 @@ import {
 	PropertyProps,
 	SortSettingsProps,
 } from "../../interfaces/SortingProps";
+import { CompleteCoinData } from "../../interfaces/CoinData";
 
 // Libraries
 import { AnimatePresence, motion } from "framer-motion";
@@ -26,19 +27,12 @@ import { ACTIONS } from "../../utils/reducer";
 // Utils
 import { sortData } from "../../utils/sortData";
 
-interface CoinData {
-	id: string;
-	name: string;
-	symbol: string;
-	value: number;
-	year: number;
-	quantity: number;
-	note?: string;
-}
-
 const Home = () => {
 	const { state, dispatch } = useContext(ThemeContext);
-	const [coins, setCoins] = useState<CoinData[]>();
+
+	const [coins, setCoins] = useState<CompleteCoinData[]>();
+	const [filteredCoins, setFilteredCoins] = useState<CompleteCoinData[]>();
+	const [search, setSearch] = useState<string | null>(null);
 	const [sortSettings, setSortSettings] = useState<SortSettingsProps>();
 
 	const [error, setError] = useState<string>();
@@ -60,6 +54,8 @@ const Home = () => {
 			);
 
 			setCoins(data);
+
+			if (!search) setFilteredCoins(data);
 		} catch (error) {
 			if (error instanceof Error) {
 				setError(error.message);
@@ -69,6 +65,14 @@ const Home = () => {
 	}
 
 	async function handleDeleteCoin(coinId: string) {
+		if (filteredCoins) {
+			const newFilter = filteredCoins.filter(
+				(coin) => coin.id !== coinId
+			);
+
+			setFilteredCoins(newFilter);
+		}
+
 		try {
 			await deleteData(`coins/${state.userUID}/coin/${coinId}`);
 		} catch (error) {
@@ -162,6 +166,20 @@ const Home = () => {
 		}
 	}
 
+	function handleSearch(searchInput: string) {
+		setSearch(searchInput);
+
+		if (coins) {
+			const filteredCoins = coins.filter(
+				(coin) =>
+					coin.name.includes(searchInput) ||
+					String(coin.year).includes(searchInput)
+			);
+
+			setFilteredCoins(filteredCoins);
+		}
+	}
+
 	useEffect(() => {
 		if (state.user && state.user.coinSortSettings) {
 			setSortSettings(state.user.coinSortSettings);
@@ -169,6 +187,10 @@ const Home = () => {
 			fetchCoins(state.user.coinSortSettings);
 		}
 	}, [state.user]);
+
+	useEffect(() => {
+		if (search) handleSearch(search);
+	}, [coins]);
 
 	return (
 		<>
@@ -188,7 +210,7 @@ const Home = () => {
 							{error && <FloatingMessage message={error} />}
 						</AnimatePresence>
 
-						<div className="flex min-h-[20%] items-center justify-between border-b-4 border-b-black p-5">
+						<div className="flex items-center justify-between border-b-4 border-b-black p-5">
 							<div>
 								<h1 className="mb-2 text-xl">
 									Welcome,{" "}
@@ -237,16 +259,10 @@ const Home = () => {
 							</div>
 						</div>
 
-						{!coins && (
-							<div className="flex h-full items-center justify-center text-lg font-semibold">
-								No coins here
-							</div>
-						)}
-
-						{coins && sortSettings && (
-							<div className="flex flex-col overflow-y-hidden">
+						{sortSettings && (
+							<div className="flex flex-grow flex-col overflow-y-hidden">
 								<div
-									className={`grid grid-cols-6 gap-3 bg-${state.theme} select-none border-b-2 border-black p-5 text-lg font-semibold text-gray-800`}
+									className={`relative grid grid-cols-6 gap-3 bg-${state.theme} select-none border-b-2 border-black p-5 text-lg font-semibold text-gray-800`}
 								>
 									<p
 										onClick={() => handleSortData("name")}
@@ -296,123 +312,144 @@ const Home = () => {
 										)}
 									</p>
 									<p className="col-span-2">Actions</p>
+
+									<div className="absolute bottom-0 right-8 z-20 w-[25%] max-w-[9.375rem] translate-y-full">
+										<input
+											type="text"
+											onChange={(e) =>
+												handleSearch(e.target.value)
+											}
+											className="input input--search h-7 rounded-t-none bg-gray-100"
+										/>
+									</div>
 								</div>
 
-								<div
-									className={`[&>*:nth-child(even)]:bg-${state.mode} overflow-y-auto scrollbar scrollbar-thumb-zinc-400 [&>*:nth-child(even)]:backdrop-brightness-75`}
-								>
-									{coins.map((coin, i) => (
-										<div
-											key={coin.id}
-											className="grid grid-cols-6 items-center gap-3 border-b-2 border-r-2 border-black p-5"
-										>
-											<p>
-												{coin.name}{" "}
-												{coin.note && (
-													<HoverCard.Root
-														openDelay={0}
-													>
-														<HoverCard.Trigger
-															asChild
+								{(!filteredCoins ||
+									filteredCoins.length === 0) && (
+									<div className="flex flex-grow items-center justify-center text-lg font-semibold">
+										No coins here
+									</div>
+								)}
+
+								{filteredCoins && (
+									<div
+										className={`[&>*:nth-child(even)]:bg-${state.mode} overflow-y-auto scrollbar scrollbar-thumb-zinc-400 [&>*:nth-child(even)]:backdrop-brightness-75`}
+									>
+										{filteredCoins.map((coin, i) => (
+											<div
+												key={coin.id}
+												className="grid grid-cols-6 items-center gap-3 border-b-2 border-r-2 border-black p-5"
+											>
+												<p>
+													{coin.name}{" "}
+													{coin.note && (
+														<HoverCard.Root
+															openDelay={0}
 														>
-															<sup
-																className="cursor-pointer font-semibold"
-																rel="noreferrer noopener"
+															<HoverCard.Trigger
+																asChild
 															>
-																(note)
-															</sup>
-														</HoverCard.Trigger>
+																<sup
+																	className="cursor-pointer font-semibold"
+																	rel="noreferrer noopener"
+																>
+																	(note)
+																</sup>
+															</HoverCard.Trigger>
 
-														<HoverCard.Portal>
-															<HoverCard.Content
-																className="input z-20 max-w-[300px] bg-light-mode p-3 dark:bg-dark-mode dark:text-gray-100"
-																side="right"
-																sideOffset={6}
-															>
-																<span className="font-semibold">
-																	Note:{" "}
-																</span>
-																{coin.note}
+															<HoverCard.Portal>
+																<HoverCard.Content
+																	className="input z-20 max-w-[300px] bg-light-mode p-3 dark:bg-dark-mode dark:text-gray-100"
+																	side="right"
+																	sideOffset={
+																		6
+																	}
+																>
+																	<span className="font-semibold">
+																		Note:{" "}
+																	</span>
+																	{coin.note}
 
-																<HoverCard.Arrow className="fill-black" />
-															</HoverCard.Content>
-														</HoverCard.Portal>
-													</HoverCard.Root>
-												)}
-											</p>
-											<p>
-												{coin.symbol} {coin.value}
-											</p>
-											<p>{coin.year}</p>
+																	<HoverCard.Arrow className="fill-black" />
+																</HoverCard.Content>
+															</HoverCard.Portal>
+														</HoverCard.Root>
+													)}
+												</p>
+												<p>
+													{coin.symbol} {coin.value}
+												</p>
+												<p>{coin.year}</p>
 
-											<div className="flex gap-6">
-												{coin.quantity}
+												<div className="flex gap-6">
+													{coin.quantity}
 
-												<div>
-													<CaretUp
-														size={12}
-														weight="bold"
-														className="cursor-pointer"
+													<div>
+														<CaretUp
+															size={12}
+															weight="bold"
+															className="cursor-pointer"
+															onClick={() =>
+																handleUpdateQuantity(
+																	coin.id,
+																	i,
+																	"ADD"
+																)
+															}
+														/>
+
+														<CaretDown
+															size={12}
+															weight="bold"
+															className="cursor-pointer"
+															onClick={() =>
+																handleUpdateQuantity(
+																	coin.id,
+																	i,
+																	"SUBTRACT"
+																)
+															}
+														/>
+													</div>
+												</div>
+
+												<div className="col-span-2 flex flex-wrap gap-2">
+													<button
+														className="input flex w-auto items-center bg-gray-300 px-6 py-2 font-semibold text-gray-800 hover:bg-gray-400 active:bg-gray-200 dark:bg-slate-500 dark:hover:bg-slate-600 dark:active:bg-slate-400"
 														onClick={() =>
-															handleUpdateQuantity(
-																coin.id,
-																i,
-																"ADD"
+															navigate(
+																`/edit/coin/${coin.id}`
 															)
 														}
-													/>
+													>
+														<PencilSimple
+															size={20}
+															weight="bold"
+															className="mr-2"
+														/>{" "}
+														Edit
+													</button>
 
-													<CaretDown
-														size={12}
-														weight="bold"
-														className="cursor-pointer"
+													<button
+														className="input flex w-auto items-center rounded-md bg-red-400 px-6 py-2 font-semibold text-gray-800 hover:bg-red-500 active:bg-red-300"
 														onClick={() =>
-															handleUpdateQuantity(
-																coin.id,
-																i,
-																"SUBTRACT"
+															handleDeleteCoin(
+																coin.id
 															)
 														}
-													/>
+													>
+														<Trash
+															size={20}
+															weight="bold"
+															className="mr-2"
+														/>{" "}
+														Delete
+													</button>
 												</div>
 											</div>
-
-											<div className="col-span-2 flex flex-wrap gap-2">
-												<button
-													className="input flex w-auto items-center bg-gray-300 px-6 py-2 font-semibold text-gray-800 hover:bg-gray-400 active:bg-gray-200 dark:bg-slate-500 dark:hover:bg-slate-600 dark:active:bg-slate-400"
-													onClick={() =>
-														navigate(
-															`/edit/coin/${coin.id}`
-														)
-													}
-												>
-													<PencilSimple
-														size={20}
-														weight="bold"
-														className="mr-2"
-													/>{" "}
-													Edit
-												</button>
-
-												<button
-													className="input flex w-auto items-center rounded-md bg-red-400 px-6 py-2 font-semibold text-gray-800 hover:bg-red-500 active:bg-red-300"
-													onClick={() =>
-														handleDeleteCoin(
-															coin.id
-														)
-													}
-												>
-													<Trash
-														size={20}
-														weight="bold"
-														className="mr-2"
-													/>{" "}
-													Delete
-												</button>
-											</div>
-										</div>
-									))}
-								</div>
+										))}
+									</div>
+								)}
 							</div>
 						)}
 					</>

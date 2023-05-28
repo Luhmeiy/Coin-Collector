@@ -28,7 +28,10 @@ import { sortData } from "../../utils/sortData";
 
 const Presets = () => {
 	const { state, dispatch } = useContext(ThemeContext);
+
 	const [presets, setPresets] = useState<PresetData[]>();
+	const [filteredPresets, setFilteredPresets] = useState<PresetData[]>();
+	const [search, setSearch] = useState<string | null>(null);
 	const [sortSettings, setSortSettings] = useState<SortSettingsProps>();
 
 	const [error, setError] = useState<string>();
@@ -50,6 +53,8 @@ const Presets = () => {
 			);
 
 			setPresets(data);
+
+			if (!search) setFilteredPresets(data);
 		} catch (error) {
 			if (error instanceof Error) {
 				setError(error.message);
@@ -104,6 +109,18 @@ const Presets = () => {
 		}
 	}
 
+	function handleSearch(searchInput: string) {
+		setSearch(searchInput);
+
+		if (presets) {
+			const filteredCoins = presets.filter((preset) =>
+				preset.name.includes(searchInput)
+			);
+
+			setFilteredPresets(filteredCoins);
+		}
+	}
+
 	useEffect(() => {
 		if (state.user && state.user.presetSortSettings) {
 			setSortSettings(state.user.presetSortSettings);
@@ -111,6 +128,10 @@ const Presets = () => {
 			fetchPresets(state.user.presetSortSettings);
 		}
 	}, [state.user]);
+
+	useEffect(() => {
+		if (search) handleSearch(search);
+	}, [presets]);
 
 	return (
 		<>
@@ -144,16 +165,10 @@ const Presets = () => {
 							{error && <FloatingMessage message={error} />}
 						</AnimatePresence>
 
-						{!presets && (
-							<div className="flex h-full items-center justify-center text-lg font-semibold">
-								No presets here
-							</div>
-						)}
-
-						{presets && sortSettings && (
-							<div className="flex flex-col overflow-y-hidden">
+						{sortSettings && (
+							<div className="flex flex-grow flex-col overflow-y-hidden">
 								<div
-									className={`grid grid-cols-7 items-center gap-3 bg-${state.theme} select-none border-b-2 border-black p-5 text-lg font-semibold text-gray-800`}
+									className={`relative grid grid-cols-7 items-center gap-3 bg-${state.theme} select-none border-b-2 border-black p-5 text-lg font-semibold text-gray-800`}
 								>
 									<p
 										onClick={() => handleSortData("name")}
@@ -201,77 +216,103 @@ const Presets = () => {
 									</p>
 									<p>Value Range</p>
 									<p className="col-span-2">Actions</p>
+
+									<div className="absolute bottom-0 right-8 z-20 w-[25%] max-w-[9.375rem] translate-y-full">
+										<input
+											type="text"
+											onChange={(e) =>
+												handleSearch(e.target.value)
+											}
+											className="input input--search h-7 rounded-t-none bg-gray-100"
+										/>
+									</div>
 								</div>
 
-								<div
-									className={`[&>*:nth-child(even)]:bg-${state.mode} overflow-y-auto scrollbar scrollbar-thumb-zinc-400 [&>*:nth-child(even)]:backdrop-brightness-75`}
-								>
-									{presets.map((preset) => (
-										<div
-											key={preset.id}
-											className="grid grid-cols-7 items-center gap-3 border-b-2 border-r-2 border-black p-5"
-										>
-											<p>{preset.name}</p>
-											<p>{preset.symbol}</p>
-											<p>
-												{preset.initial_emission_date}
-											</p>
-											<p>{preset.final_emission_date}</p>
+								{(!filteredPresets ||
+									filteredPresets.length === 0) && (
+									<div className="flex flex-grow items-center justify-center text-lg font-semibold">
+										No presets here
+									</div>
+								)}
 
-											<p>
-												{preset.value_range.map(
-													(value, i) => {
-														return (
-															<span
-																key={value + i}
-															>
-																{value}
-																{preset
-																	.value_range
-																	.length ===
-																i + 1
-																	? ""
-																	: ", "}
-															</span>
-														);
+								{filteredPresets && (
+									<div
+										className={`[&>*:nth-child(even)]:bg-${state.mode} overflow-y-auto scrollbar scrollbar-thumb-zinc-400 [&>*:nth-child(even)]:backdrop-brightness-75`}
+									>
+										{filteredPresets.map((preset) => (
+											<div
+												key={preset.id}
+												className="grid grid-cols-7 items-center gap-3 border-b-2 border-r-2 border-black p-5"
+											>
+												<p>{preset.name}</p>
+												<p>{preset.symbol}</p>
+												<p>
+													{
+														preset.initial_emission_date
 													}
-												)}
-											</p>
+												</p>
+												<p>
+													{preset.final_emission_date}
+												</p>
 
-											<div className="col-span-2 flex flex-wrap gap-2">
-												<button
-													className="input flex w-auto items-center gap-2 bg-gray-300 px-6 py-2 font-semibold text-gray-800 hover:bg-gray-400 active:bg-gray-200 dark:bg-slate-500 dark:hover:bg-slate-600 dark:active:bg-slate-400"
-													onClick={() =>
-														navigate(
-															`/edit/preset/${preset.id}`
-														)
-													}
-												>
-													<PencilSimple
-														size={20}
-														weight="bold"
-													/>{" "}
-													Edit
-												</button>
+												<p>
+													{preset.value_range.map(
+														(value, i) => {
+															return (
+																<span
+																	key={
+																		value +
+																		i
+																	}
+																>
+																	{value}
+																	{preset
+																		.value_range
+																		.length ===
+																	i + 1
+																		? ""
+																		: ", "}
+																</span>
+															);
+														}
+													)}
+												</p>
 
-												<button
-													className="input flex w-auto items-center gap-2 bg-red-400 px-6 py-2 font-semibold text-gray-800 hover:bg-red-500 active:bg-red-300"
-													onClick={() =>
-														handleDeletePreset(
-															preset.id
-														)
-													}
-												>
-													<Trash
-														size={20}
-														weight="bold"
-													/>{" "}
-													Delete
-												</button>
+												<div className="col-span-2 flex flex-wrap gap-2">
+													<button
+														className="input flex w-auto items-center gap-2 bg-gray-300 px-6 py-2 font-semibold text-gray-800 hover:bg-gray-400 active:bg-gray-200 dark:bg-slate-500 dark:hover:bg-slate-600 dark:active:bg-slate-400"
+														onClick={() =>
+															navigate(
+																`/edit/preset/${preset.id}`
+															)
+														}
+													>
+														<PencilSimple
+															size={20}
+															weight="bold"
+														/>{" "}
+														Edit
+													</button>
+
+													<button
+														className="input flex w-auto items-center gap-2 bg-red-400 px-6 py-2 font-semibold text-gray-800 hover:bg-red-500 active:bg-red-300"
+														onClick={() =>
+															handleDeletePreset(
+																preset.id
+															)
+														}
+													>
+														<Trash
+															size={20}
+															weight="bold"
+														/>{" "}
+														Delete
+													</button>
+												</div>
 											</div>
-										</div>
-									))}
-								</div>
+										))}
+									</div>
+								)}
 							</div>
 						)}
 					</>

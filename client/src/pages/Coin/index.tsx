@@ -7,6 +7,9 @@ import { ThemeContext } from "../../context";
 // Hooks
 import { usePost, useUpdate } from "../../hooks";
 
+// Interfaces
+import { CoinData } from "../../interfaces/CoinData";
+
 // Libraries
 import { AnimatePresence, motion } from "framer-motion";
 import { X } from "@phosphor-icons/react";
@@ -26,15 +29,6 @@ interface FormData extends EventTarget {
 	year: InputData;
 	quantity: InputData;
 	note: InputData;
-}
-
-interface CoinData {
-	name: string;
-	symbol: string;
-	value: number;
-	year: number;
-	quantity: number;
-	note?: string;
 }
 
 const Coin = () => {
