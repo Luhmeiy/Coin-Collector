@@ -111,7 +111,7 @@ const Login = () => {
 
 	return (
 		<motion.div
-			className="shadow-solid z-10 grid min-h-[65%] w-[85%] grid-cols-2 items-center justify-items-center bg-light-mode p-24 dark:bg-dark-mode"
+			className="shadow-solid z-10 grid min-h-[65%] w-[85%] grid-cols-2 items-center justify-items-center gap-8 bg-light-mode p-12 dark:bg-dark-mode max-tablet:w-[85%] max-tablet:grid-cols-1 max-phone:p-6"
 			initial={{ translateY: window.innerHeight }}
 			animate={{ translateY: 0 }}
 			exit={{ translateY: window.innerHeight }}
@@ -124,8 +124,8 @@ const Login = () => {
 				{error && <FloatingMessage message={error} />}
 			</AnimatePresence>
 
-			<div>
-				<h1 className="mb-4 font-title text-[4rem] font-bold uppercase leading-tight">
+			<div className="max-tablet:hidden">
+				<h1 className="none mb-4 font-title text-[4rem] font-bold uppercase leading-tight max-laptop:text-5xl">
 					Coin <br /> Collector
 				</h1>
 				<p className="mb-4 font-bold">
@@ -135,7 +135,7 @@ const Login = () => {
 				<p>Welcome back, your coins await you!</p>
 			</div>
 
-			<div className="flex min-w-[300px] flex-col gap-8">
+			<div className="flex min-w-[300px] flex-col gap-8 max-phone:min-w-full">
 				<h2 className="text-center text-[2rem] font-semibold">Login</h2>
 
 				<form onSubmit={handleSignIn}>

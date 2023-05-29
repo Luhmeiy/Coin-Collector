@@ -24,6 +24,11 @@ export default {
 				montserrat: ["Montserrat", "sans-serif"],
 			},
 		},
+		screens: {
+			phone: "450px",
+			tablet: "880px",
+			laptop: "1024px",
+		},
 	},
 	plugins: [handler],
 } satisfies Config;
