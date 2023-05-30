@@ -59,7 +59,7 @@ const CoinForm = ({
 
 	return (
 		<motion.form
-			className="grid grid-cols-5 gap-5 py-2"
+			className="grid grid-cols-5 gap-5 py-2 max-form:max-w-[300px] max-form:grid-cols-2"
 			onSubmit={(e) => handleSubmit(e)}
 			initial={{ scale: 0 }}
 			animate={{ scale: 1 }}
@@ -71,7 +71,7 @@ const CoinForm = ({
 		>
 			{!loading && (
 				<>
-					<div className="col-span-4">
+					<div className="col-span-4 max-form:col-span-full">
 						<label className="input-container">
 							<span>Name</span>
 							<input
@@ -99,7 +99,7 @@ const CoinForm = ({
 						</label>
 					</div>
 
-					<div className="col-span-2">
+					<div className="col-span-2 max-form:col-span-1">
 						<label className="input-container">
 							<span>Value</span>
 							<input
@@ -113,7 +113,7 @@ const CoinForm = ({
 						</label>
 					</div>
 
-					<div className="col-span-2">
+					<div className="col-span-2 max-form:col-span-1">
 						<label className="input-container">
 							<span>Year</span>
 							<input
@@ -145,7 +145,7 @@ const CoinForm = ({
 						</label>
 					</div>
 
-					<div className="col-span-5">
+					<div className="col-span-full">
 						<label className="input-container">
 							<span>
 								Note{" "}
@@ -161,7 +161,7 @@ const CoinForm = ({
 					</div>
 
 					<button
-						className="input col-span-3 col-start-2 mt-2 flex justify-center self-center bg-green-500 px-6 py-2 font-semibold text-gray-100 transition-all duration-500 hover:bg-green-600 active:bg-green-400 disabled:cursor-not-allowed disabled:bg-gray-400"
+						className="input col-span-3 col-start-2 mt-2 flex justify-center self-center bg-green-500 px-6 py-2 font-semibold text-gray-100 transition-all duration-500 hover:bg-green-600 active:bg-green-400 disabled:cursor-not-allowed disabled:bg-gray-400 max-form:col-span-full"
 						disabled={success}
 					>
 						{coinId ? "Edit" : "Add"}

@@ -101,7 +101,7 @@ const Coin = () => {
 
 	return (
 		<motion.div
-			className="shadow-solid relative z-10 flex h-[85%] w-[85%] flex-col items-center justify-center bg-light-mode dark:bg-dark-mode dark:text-gray-100"
+			className="shadow-solid relative z-10 flex min-h-[85%] w-[85%] flex-col items-center justify-center bg-light-mode py-3 dark:bg-dark-mode dark:text-gray-100"
 			initial={{ scale: 0 }}
 			animate={{ scale: 1 }}
 			exit={{ scale: 0 }}
@@ -117,50 +117,48 @@ const Coin = () => {
 				<X size={24} weight="bold" />
 			</button>
 
-			<div className="w-[50%]">
-				<h1 className="mb-6 text-center text-[4rem] font-bold">
+			<div className="flex w-[50%] flex-col items-center gap-6 max-laptop:w-[75%] max-form:gap-3">
+				<h1 className="text-[4rem] font-bold max-form:text-[2rem]">
 					{coinId ? "Edit" : "Add"} Coin
 				</h1>
 
-				<div className="flex flex-col items-center gap-6">
-					{!coinId && (
-						<button
-							className={`bg-${state.theme} input w-auto px-5 py-2 font-semibold text-gray-800 hover:brightness-90 active:brightness-110`}
-							onClick={() => setPresetUse(!presetUse)}
-						>
-							{!presetUse ? "Use Preset" : "Cancel"}
-						</button>
+				{!coinId && (
+					<button
+						className={`bg-${state.theme} input w-auto px-5 py-2 font-semibold text-gray-800 hover:brightness-90 active:brightness-110`}
+						onClick={() => setPresetUse(!presetUse)}
+					>
+						{!presetUse ? "Use Preset" : "Cancel"}
+					</button>
+				)}
+
+				<AnimatePresence mode="wait">
+					{!presetUse ? (
+						<CoinForm
+							handleSubmit={handleSubmit}
+							success={success}
+							setError={setError}
+							coinId={coinId}
+						/>
+					) : (
+						<CoinWithPresetForm
+							handleSubmit={handleSubmit}
+							success={success}
+							setError={setError}
+						/>
 					)}
+				</AnimatePresence>
 
-					<AnimatePresence mode="wait">
-						{!presetUse ? (
-							<CoinForm
-								handleSubmit={handleSubmit}
-								success={success}
-								setError={setError}
-								coinId={coinId}
-							/>
-						) : (
-							<CoinWithPresetForm
-								handleSubmit={handleSubmit}
-								success={success}
-								setError={setError}
-							/>
-						)}
-					</AnimatePresence>
-
-					<AnimatePresence>
-						{success && (
-							<Message
-								message={`Coin ${
-									coinId ? "edited" : "added"
-								} successfully`}
-								type="success"
-							/>
-						)}
-						{error && <Message message={error} type="error" />}
-					</AnimatePresence>
-				</div>
+				<AnimatePresence>
+					{success && (
+						<Message
+							message={`Coin ${
+								coinId ? "edited" : "added"
+							} successfully`}
+							type="success"
+						/>
+					)}
+					{error && <Message message={error} type="error" />}
+				</AnimatePresence>
 			</div>
 		</motion.div>
 	);

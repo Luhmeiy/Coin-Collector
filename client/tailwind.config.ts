@@ -26,6 +26,7 @@ export default {
 		},
 		screens: {
 			phone: "450px",
+			form: "752px",
 			tablet: "880px",
 			laptop: "1024px",
 		},
