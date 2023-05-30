@@ -102,7 +102,7 @@ const Preset = () => {
 
 	return (
 		<motion.div
-			className="shadow-solid relative z-10 flex h-[85%] w-[85%] flex-col items-center justify-center bg-light-mode dark:bg-dark-mode dark:text-gray-100"
+			className="shadow-solid relative z-10 flex min-h-[85%] w-[85%] flex-col items-center justify-center bg-light-mode dark:bg-dark-mode dark:text-gray-100"
 			initial={{ scale: 0 }}
 			animate={{ scale: 1 }}
 			exit={{ scale: 0 }}
@@ -120,18 +120,18 @@ const Preset = () => {
 				<X size={24} weight="bold" />
 			</button>
 
-			<div className="w-[50%]">
-				<h1 className="mb-6 text-center text-[4rem] font-bold">
+			<div className="flex w-[50%] flex-col items-center gap-6 max-laptop:w-[75%] max-form:gap-2">
+				<h1 className="text-[4rem] font-bold max-form:text-[2rem]">
 					{presetId ? "Edit" : "Add"} Preset
 				</h1>
 
 				{!loading && (
 					<>
 						<form
-							className="grid grid-cols-5 gap-5 py-2"
+							className="grid grid-cols-6 gap-5  py-2 max-form:max-w-[300px] max-form:grid-cols-1"
 							onSubmit={handleSubmit}
 						>
-							<div className="col-span-4">
+							<div className="col-span-4 max-form:col-span-full">
 								<label className="input-container">
 									<span>Name</span>
 									<input
@@ -146,7 +146,7 @@ const Preset = () => {
 								</label>
 							</div>
 
-							<div className="col-span-1">
+							<div className="col-span-2 max-form:col-span-full">
 								<label className="input-container">
 									<span>Symbol</span>
 									<input
@@ -161,7 +161,7 @@ const Preset = () => {
 								</label>
 							</div>
 
-							<div className="col-span-2">
+							<div className="col-span-3 max-form:col-span-full">
 								<label className="input-container">
 									<span>Initial Emission Date</span>
 									<input
@@ -178,7 +178,7 @@ const Preset = () => {
 								</label>
 							</div>
 
-							<div className="col-span-3">
+							<div className="col-span-3 max-form:col-span-full">
 								<label className="input-container">
 									<span>Final Emission Date</span>
 									<input
@@ -195,7 +195,7 @@ const Preset = () => {
 								</label>
 							</div>
 
-							<div className="col-span-5">
+							<div className="col-span-full">
 								<label className="input-container">
 									<span>
 										Value Range{" "}
@@ -216,7 +216,7 @@ const Preset = () => {
 							</div>
 
 							<button
-								className="input col-span-3 col-start-2 mt-2 flex justify-center self-center bg-green-500 px-6 py-2 font-semibold text-gray-100 transition-all duration-500 hover:bg-green-600 active:bg-green-400 disabled:cursor-not-allowed disabled:bg-gray-400"
+								className="input col-span-3 col-start-2 mt-2 flex justify-center self-center bg-green-500 px-6 py-2 font-semibold text-gray-100 transition-all duration-500 hover:bg-green-600 active:bg-green-400 disabled:cursor-not-allowed disabled:bg-gray-400 max-form:col-span-full"
 								disabled={success}
 							>
 								{presetId ? "Edit" : "Add"}
