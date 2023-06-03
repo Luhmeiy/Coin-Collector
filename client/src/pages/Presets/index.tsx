@@ -186,7 +186,7 @@ const Presets = () => {
 									className={`relative hidden text-gray-800 max-tablet:grid`}
 								>
 									<div
-										className={`absolute bottom-0 left-8 z-20 h-7 w-max min-w-[7.25rem] translate-y-full rounded-t-none border-t-0 bg-gray-100 p-0 ${
+										className={`absolute bottom-0 left-8 z-20 h-7 w-max translate-y-full rounded-t-none border-t-0 bg-gray-100 p-0 ${
 											!isContentOpen && "input"
 										} max-phone:left-4`}
 										onClick={() => setIsContentOpen(true)}

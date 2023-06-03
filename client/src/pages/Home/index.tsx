@@ -276,7 +276,7 @@ const Home = () => {
 									className={`relative hidden text-gray-800 max-tablet:grid`}
 								>
 									<div
-										className={`absolute bottom-0 left-8 z-20 h-7 w-[25%] min-w-[7.25rem] max-w-[9.375rem] translate-y-full rounded-t-none border-t-0 bg-gray-100 p-0 ${
+										className={`absolute bottom-0 left-8 z-20 h-7 w-max translate-y-full rounded-t-none border-t-0 bg-gray-100 p-0 ${
 											!isContentOpen && "input"
 										} max-phone:left-4`}
 										onClick={() => setIsContentOpen(true)}
@@ -286,7 +286,7 @@ const Home = () => {
 												isContentOpen && "hidden"
 											}`}
 										>
-											<p className="flex items-center gap-1 pl-2 capitalize">
+											<p className="flex items-center gap-1 pl-2 pr-8 capitalize">
 												{sortSettings.property}{" "}
 												<Arrow
 													direction={sortSettings.asc}

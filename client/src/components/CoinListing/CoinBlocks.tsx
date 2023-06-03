@@ -23,7 +23,7 @@ const CoinBlocks = ({ filteredCoins, handleDeleteCoin }: CoinListingProps) => {
 				filteredCoins.map((coin) => (
 					<div
 						key={coin.id}
-						className="input flex h-auto flex-col bg-gray-100 px-3 py-2"
+						className="input flex h-auto flex-col bg-light-mode px-3 py-2 dark:bg-dark-mode"
 					>
 						<p>
 							<span className="font-semibold">{coin.name}</span> (
