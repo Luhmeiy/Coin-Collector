@@ -1,5 +1,10 @@
 // Components
-import { Arrow, FloatingMessage } from "../../components";
+import {
+	Arrow,
+	FloatingMessage,
+	PresetBlocks,
+	PresetList,
+} from "../../components";
 
 // Context
 import { ThemeContext } from "../../context";
@@ -16,7 +21,7 @@ import {
 
 // Libraries
 import { AnimatePresence, motion } from "framer-motion";
-import { PencilSimple, Trash } from "@phosphor-icons/react";
+import { CaretDown } from "@phosphor-icons/react";
 
 // React
 import { useContext, useEffect, useState } from "react";
@@ -33,6 +38,8 @@ const Presets = () => {
 	const [filteredPresets, setFilteredPresets] = useState<PresetData[]>();
 	const [search, setSearch] = useState<string | null>(null);
 	const [sortSettings, setSortSettings] = useState<SortSettingsProps>();
+
+	const [isContentOpen, setIsContentOpen] = useState(false);
 
 	const [error, setError] = useState<string>();
 
@@ -100,6 +107,8 @@ const Presets = () => {
 				await update(`users/${state.userUID}`, {
 					presetSortSettings: newSort,
 				});
+
+				setIsContentOpen(false);
 			} catch (error) {
 				if (error instanceof Error) {
 					setError(error.message);
@@ -121,6 +130,11 @@ const Presets = () => {
 		}
 	}
 
+	const PresetListingProps = {
+		filteredPresets,
+		handleDeletePreset,
+	};
+
 	useEffect(() => {
 		if (state.user && state.user.presetSortSettings) {
 			setSortSettings(state.user.presetSortSettings);
@@ -136,7 +150,7 @@ const Presets = () => {
 	return (
 		<>
 			<motion.button
-				className="absolute left-0 z-10 w-0 break-words bg-black px-6 py-2 text-center font-semibold uppercase leading-5 text-gray-100"
+				className="absolute left-0 z-10 w-0 break-words bg-black px-6 py-2 text-center font-semibold uppercase leading-5 text-gray-100 max-tablet:bottom-0 max-tablet:right-0 max-tablet:mx-auto max-tablet:w-max"
 				initial={{ translateX: window.innerWidth }}
 				animate={{ translateX: 0 }}
 				exit={{ translateX: window.innerWidth }}
@@ -150,7 +164,7 @@ const Presets = () => {
 			</motion.button>
 
 			<motion.div
-				className="shadow-solid z-10 flex h-[85%] w-[85%] flex-col overflow-hidden bg-light-mode dark:bg-dark-mode dark:text-gray-100"
+				className="shadow-solid z-10 flex h-[85%] w-[85%] flex-col overflow-hidden bg-light-mode dark:bg-dark-mode dark:text-gray-100 max-tablet:h-[85dvh] max-tablet:w-[90%]"
 				initial={{ translateX: window.innerWidth }}
 				animate={{ translateX: 0 }}
 				exit={{ translateX: window.innerWidth }}
@@ -167,8 +181,112 @@ const Presets = () => {
 
 						{sortSettings && (
 							<div className="flex flex-grow flex-col overflow-y-hidden">
+								{/* Mobile version */}
 								<div
-									className={`relative grid grid-cols-7 items-center gap-3 bg-${state.theme} select-none border-b-2 border-black p-5 text-lg font-semibold text-gray-800`}
+									className={`relative hidden text-gray-800 max-tablet:grid`}
+								>
+									<div
+										className={`absolute bottom-0 left-8 z-20 h-7 w-max min-w-[7.25rem] translate-y-full rounded-t-none border-t-0 bg-gray-100 p-0 ${
+											!isContentOpen && "input"
+										} max-phone:left-4`}
+										onClick={() => setIsContentOpen(true)}
+									>
+										<div
+											className={`${
+												isContentOpen && "hidden"
+											}`}
+										>
+											<p className="flex items-center gap-1 pl-2 pr-8 capitalize">
+												<span className="overflow-hidden overflow-ellipsis whitespace-nowrap max-phone:max-w-[8ch]">
+													{sortSettings.property
+														.split("_", 2)
+														.join(" ")}{" "}
+												</span>
+
+												<Arrow
+													direction={sortSettings.asc}
+												/>
+											</p>
+
+											<CaretDown
+												size={16}
+												weight="bold"
+												className="absolute bottom-0 right-2 top-0 my-auto"
+											/>
+										</div>
+
+										{isContentOpen && (
+											<div className="input flex w-full flex-col gap-1 rounded-t-none border-t-0 bg-gray-100 p-2">
+												<p
+													onClick={() =>
+														handleSortData("name")
+													}
+													className="flex cursor-pointer items-center gap-1"
+												>
+													Name
+													{sortSettings.property ===
+														"name" && (
+														<Arrow
+															direction={
+																sortSettings.asc
+															}
+														/>
+													)}
+												</p>
+												<p
+													onClick={() =>
+														handleSortData(
+															"initial_emission_date"
+														)
+													}
+													className="flex cursor-pointer items-center gap-1"
+												>
+													Initial Emission
+													{sortSettings.property ===
+														"initial_emission_date" && (
+														<Arrow
+															direction={
+																sortSettings.asc
+															}
+														/>
+													)}
+												</p>
+												<p
+													onClick={() =>
+														handleSortData(
+															"final_emission_date"
+														)
+													}
+													className="flex cursor-pointer items-center gap-1"
+												>
+													Final Emission
+													{sortSettings.property ===
+														"final_emission_date" && (
+														<Arrow
+															direction={
+																sortSettings.asc
+															}
+														/>
+													)}
+												</p>
+											</div>
+										)}
+									</div>
+
+									<div className="absolute bottom-0 right-8 z-20 w-[25%] min-w-[7.25rem] max-w-[9.375rem] translate-y-full max-phone:right-4">
+										<input
+											type="text"
+											onChange={(e) =>
+												handleSearch(e.target.value)
+											}
+											className="input input--search h-7 rounded-t-none border-t-0 bg-gray-100"
+										/>
+									</div>
+								</div>
+
+								{/* Desktop version */}
+								<div
+									className={`relative grid grid-cols-7 items-center gap-3 bg-${state.theme} select-none border-b-2 border-black p-5 text-lg font-semibold text-gray-800 max-tablet:hidden`}
 								>
 									<p
 										onClick={() => handleSortData("name")}
@@ -236,82 +354,10 @@ const Presets = () => {
 								)}
 
 								{filteredPresets && (
-									<div
-										className={`[&>*:nth-child(even)]:bg-${state.mode} overflow-y-auto scrollbar scrollbar-thumb-zinc-400 [&>*:nth-child(even)]:backdrop-brightness-75`}
-									>
-										{filteredPresets.map((preset) => (
-											<div
-												key={preset.id}
-												className="grid grid-cols-7 items-center gap-3 border-b-2 border-r-2 border-black p-5"
-											>
-												<p>{preset.name}</p>
-												<p>{preset.symbol}</p>
-												<p>
-													{
-														preset.initial_emission_date
-													}
-												</p>
-												<p>
-													{preset.final_emission_date}
-												</p>
-
-												<p>
-													{preset.value_range.map(
-														(value, i) => {
-															return (
-																<span
-																	key={
-																		value +
-																		i
-																	}
-																>
-																	{value}
-																	{preset
-																		.value_range
-																		.length ===
-																	i + 1
-																		? ""
-																		: ", "}
-																</span>
-															);
-														}
-													)}
-												</p>
-
-												<div className="col-span-2 flex flex-wrap gap-2">
-													<button
-														className="input flex w-auto items-center gap-2 bg-gray-300 px-6 py-2 font-semibold text-gray-800 hover:bg-gray-400 active:bg-gray-200 dark:bg-slate-500 dark:hover:bg-slate-600 dark:active:bg-slate-400"
-														onClick={() =>
-															navigate(
-																`/edit/preset/${preset.id}`
-															)
-														}
-													>
-														<PencilSimple
-															size={20}
-															weight="bold"
-														/>{" "}
-														Edit
-													</button>
-
-													<button
-														className="input flex w-auto items-center gap-2 bg-red-400 px-6 py-2 font-semibold text-gray-800 hover:bg-red-500 active:bg-red-300"
-														onClick={() =>
-															handleDeletePreset(
-																preset.id
-															)
-														}
-													>
-														<Trash
-															size={20}
-															weight="bold"
-														/>{" "}
-														Delete
-													</button>
-												</div>
-											</div>
-										))}
-									</div>
+									<>
+										<PresetList {...PresetListingProps} />
+										<PresetBlocks {...PresetListingProps} />
+									</>
 								)}
 							</div>
 						)}
