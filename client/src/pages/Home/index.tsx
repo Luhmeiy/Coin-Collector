@@ -59,8 +59,7 @@ const Home = () => {
 			if (!search) setFilteredCoins(data);
 		} catch (error) {
 			if (error instanceof Error) {
-				setError(error.message);
-				setTimeout(() => setError(""), 3000);
+				console.log(error.message);
 			}
 		}
 	}
